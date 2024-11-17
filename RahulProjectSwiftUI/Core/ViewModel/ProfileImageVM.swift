@@ -35,7 +35,7 @@ class ProfileImageVM: ObservableObject {
         permissionManager.checkPhotoLibraryPermission()
     }
     
-    func processSelectedImage(_ image: UIImage) {
-        profileImage = image
-    }
+//    func processSelectedImage(_ image: UIImage) {
+//        profileImage = image
+//    }
 }

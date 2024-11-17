@@ -10,6 +10,8 @@ import SwiftUI
 // Modified ImagePickerBottomSheet without extra sheet
 struct ImagePickerBottomSheet: View {
     @Binding var isPresented: Bool
+    
+    //ImagePickerBottomSheet uses @ObservedObject to observe the same instance of MediaPermissionManager that was passed from ProfileImageVM.
     @ObservedObject var permissionManager: MediaPermissionManager
     @Binding var showPermissionAlert: Bool
     @ObservedObject var viewModel: ProfileImageVM
