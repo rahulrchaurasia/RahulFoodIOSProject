@@ -8,7 +8,12 @@
 import SwiftUI
 
 struct ProfileView: View {
+    
+    @EnvironmentObject var authVM : AuthViewModel  // Common ViewModel
+    
     @StateObject private var viewModel = ProfileImageVM()
+    
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         VStack {
@@ -47,9 +52,82 @@ struct ProfileView: View {
             .padding(.top, 50)
             
             Spacer()
+            
+            List{
+                
+                Section{
+                    
+                    HStack{
+                        
+                        Text("RC")
+                            .font(.title)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.white)
+                            .frame(width: 70, height: 70)
+                            .background(Color(.lightGray))
+                            .clipShape(Circle())
+                        
+                        VStack(alignment: .leading, spacing: 4){
+                            
+                            Text("Rahul Chaurasia")
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(Color.appblack )
+                            
+                            Text("Software Engineer")
+                                .font(.footnote)
+                                .foregroundStyle(Color.statusBar)
+                                
+                        }
+                    }
+                }
+                
+                Section("Account") {
+                    
+                    Button {
+                        
+                    } label: {
+                       
+                        Label {
+                           
+                            Text("Sign Out")
+                                .fontWeight(.semibold)
+                                .foregroundStyle(Color.appblack)
+                        } icon: {
+                            
+                            Image(systemName: "arrow.left.circle.fill")
+                                .foregroundStyle(.red)
+                        }
+
+                    }
+                    
+                    Button {
+                        
+                    } label: {
+                       
+                        Label {
+                           
+                            Text("Delete Account")
+                                .fontWeight(.semibold)
+                                .foregroundStyle(Color.appblack)
+                        } icon: {
+                            
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundStyle(.red)
+                        }
+
+                    }
+
+                }
+              
+            }
+           
+            .scrollContentBackground(.hidden) // Disable default background
+            .background(.blue.opacity(0.1)) // Light red background
+             
         }
         
-      
+        
         .sheet(isPresented: $viewModel.showCamera) {
             CameraView(image: $viewModel.profileImage)
         }
@@ -83,4 +161,5 @@ struct ProfileView: View {
 
 #Preview {
     ProfileView()
+        .environmentObject(AuthViewModel())
 }
