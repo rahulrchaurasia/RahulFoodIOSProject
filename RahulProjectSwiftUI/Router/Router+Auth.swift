@@ -9,11 +9,12 @@ import Foundation
 import SwiftUICore
 
 //Extension for Router
+
+
 extension Router {
     
     @ViewBuilder
     func destination(for flow : AuthFlow) -> some View {
-        
         
         switch flow {
             
