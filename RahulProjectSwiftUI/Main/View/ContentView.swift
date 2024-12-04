@@ -8,20 +8,14 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @EnvironmentObject var authVM : AuthViewModel
     var body: some View {
-        VStack {
-//            Image(systemName: "globe")
-//                .imageScale(.large)
-//                .foregroundStyle(.tint)
-//            Text("Hello, world!")
-            
-            if #available(iOS 16.0, *) {
-                ProfileView1()
-            } else {
-                // Fallback on earlier versions
-            }
-        }
-        .padding()
+        
+        LoginView()
+        //HomeView()
+            .environmentObject(authVM)
+        
     }
 }
 

@@ -11,9 +11,15 @@ struct ProfileView: View {
     
     @EnvironmentObject var authVM : AuthViewModel  // Common ViewModel
     
+    @EnvironmentObject var router : Router
+    
     @StateObject private var viewModel = ProfileImageVM()
     
     @Environment(\.presentationMode) var presentationMode
+    
+    let myProfile : UserProfile
+    
+   // let name : String
     
     var body: some View {
         VStack {
@@ -69,12 +75,12 @@ struct ProfileView: View {
                         
                         VStack(alignment: .leading, spacing: 4){
                             
-                            Text("Rahul Chaurasia")
+                            Text(myProfile.name)
                                 .font(.headline)
                                 .fontWeight(.semibold)
                                 .foregroundStyle(Color.appblack )
                             
-                            Text("Software Engineer")
+                            Text(myProfile.designation ?? "No Designation")
                                 .font(.footnote)
                                 .foregroundStyle(Color.statusBar)
                                 
@@ -160,6 +166,8 @@ struct ProfileView: View {
 }
 
 #Preview {
-    ProfileView()
+    
+    let profile = UserProfile(name: "Umesh", age: 32, gender: .male)
+    ProfileView( myProfile: profile)
         .environmentObject(AuthViewModel())
 }

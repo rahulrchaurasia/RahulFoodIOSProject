@@ -15,11 +15,14 @@ struct createAccountView: View {
     @State var confirmPassword: String = ""
     
     @EnvironmentObject var authVM : AuthViewModel
-    @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var router : Router
+    
+    var name : String = ""
+  //  @Environment(\.presentationMode) var presentationMode
     var body: some View {
         
         VStack {
-            Text("Create Account")
+            Text("Create Account \(name)")
                 .font(.title2)
                 .fontWeight(.semibold)
             
@@ -59,7 +62,9 @@ struct createAccountView: View {
             
             Button {
                 
-                presentationMode.wrappedValue.dismiss()
+               // presentationMode.wrappedValue.dismiss()
+                
+                router.navigateBack()
                 
             } label: {
                 
@@ -84,6 +89,6 @@ struct createAccountView: View {
 }
 
 #Preview {
-    createAccountView()
+    createAccountView( name: "Rahul")
         .environmentObject(AuthViewModel())
 }

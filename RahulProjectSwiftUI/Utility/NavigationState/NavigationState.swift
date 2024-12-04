@@ -6,3 +6,12 @@
 //
 
 import Foundation
+
+
+enum NavigationState : Hashable {
+    
+       case emailSent
+       case whatsSent
+       case smsSent
+       case childPage
+}

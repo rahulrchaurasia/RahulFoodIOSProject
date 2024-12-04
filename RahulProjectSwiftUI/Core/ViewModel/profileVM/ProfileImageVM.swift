@@ -11,6 +11,7 @@ import UIKit
 
 // Modified ViewModel
 class ProfileImageVM: ObservableObject {
+    
     @Published var profileImage: UIImage?
     
     //Mark :Open the BottomSheet Dialog ie {ImagePickerBottomSheet}  using showMediaPicker

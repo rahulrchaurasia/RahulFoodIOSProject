@@ -2,6 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <!-- Launch Screen Configuration -->
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>
@@ -11,5 +12,9 @@
 		<key>UILaunchScreen</key>
 		<dict/>
 	</dict>
+    
+    <!-- Firebase Messaging Configuration -->
+        <key>FirebaseAppDelegateProxyEnabled</key>
+        <false/>
 </dict>
 </plist>
