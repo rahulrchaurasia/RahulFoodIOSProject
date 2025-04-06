@@ -10,13 +10,23 @@ import SwiftUI
 struct ContentView: View {
     
     @EnvironmentObject var authVM : AuthViewModel
+    @EnvironmentObject var userVM : UserViewModel
+    @EnvironmentObject var router : Router
     var body: some View {
-        
-        LoginView()
-        //HomeView()
-            .environmentObject(authVM)
-        
+       // Group {
+        switch router.root {
+            case .onboardingModule:
+                 OnboardingView()
+               // LoginView()
+            case .loginModule:
+                LoginNewView()
+            case .dashboardModule:
+                HomeView()
+            }
+       // }
+       // .animation(.easeInOut, value: authVM.currentAuthState)
     }
+
 }
 
 #Preview {

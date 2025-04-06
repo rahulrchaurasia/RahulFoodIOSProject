@@ -9,127 +9,99 @@ import SwiftUI
 
 // Mark : navigationDestination demo
 struct HomeView: View {
- 
-    //@State private var navigationState: NavigationState?
+    @EnvironmentObject var authVM: AuthViewModel
+    @EnvironmentObject var userVM: UserViewModel
+    @EnvironmentObject var router: Router
     
-    @State private var navigationPath = NavigationPath() // For managing navigation stack
-
+    @State private var tabSelection = 0
+    @State private var selectedTab: BottomNavigationView.TabItem = .home
+    
+    // Menu state
+    @State private var showMenu = false
+    
     var body: some View {
-        
-        
-        NavigationStack(path: $navigationPath ){
-            
-            VStack(alignment:.leading, spacing:15) {
+        ZStack(alignment: .bottom) {
+            ZStack(alignment: .leading) {
+                // Main content
+                TabContentView(selectedTab: selectedTab)
+                //Mark : Below line handle Side menu,contain open 75 percentage
+                    .offset(x: showMenu ? UIScreen.main.bounds.width * 0.75 : 0)
+                    .scaleEffect(showMenu ? 0.9 : 1)
+                    .shadow(color: showMenu ? .black.opacity(0.2) : .clear, radius: 10)
+                    .disabled(showMenu)
                 
-                
-                Spacer()
-                
-                Button {
-                    navigationPath.append(NavigationState.emailSent)
-                } label: {
-                    Text("Send Email Instruction")
-                }
-                .buttonStyle(CapsuleButtonStyle())
-                
-                Button {
-                    navigationPath.append(NavigationState.whatsSent)
-                } label: {
-                    Text("Send WhatsApp Instruction")
-                }
-                .buttonStyle(CapsuleButtonStyle(bgColor: Color.orange.opacity(0.7), textColor: Color.red, hasBorder: true))
-                
-                
-                Button {
-                    
-                    navigationPath.append(NavigationState.smsSent)
-                } label: {
-                    Text("Send Sms Instruction")
-                }.buttonStyle(CapsuleButtonStyle(bgColor: Color.black, textColor: Color.white, hasBorder: true))
-                
-                
-            }
-            
-            .ignoresSafeArea()
-            .padding()
-            .padding(.horizontal)
-            .toolbarRole(.editor)
-            
-            .navigationDestination(for: NavigationState.self) { state in
-             
-                    switch state {
-                    case .emailSent:
-                        
-                        EmailSentView()
-                        
-                    case .whatsSent:
-                        
-                        WhatsAppView(onClose: {
-                            navigationPath.removeLast()
-                            
-                        })
-                    case .smsSent:
-                        SMSSentView {
-                            navigationPath.removeLast()
+                //Mark :Side menu, Dark overlay when menu is showing
+                if showMenu {
+                    Color.black
+                        .opacity(0.3)
+                        .ignoresSafeArea()
+                        .transition(.opacity)
+                        .onTapGesture {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                                showMenu = false
+                            }
                         }
-                    case .childPage:
-                        SMSSentView{
-                            
-                            navigationPath.removeLast()
+                }
+                
+                // Side menu
+                if showMenu {
+                    SideMenuView(isShowing: $showMenu)
+                        .transition(.move(edge: .leading))
+                }
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                            showMenu.toggle()
+                        }
+                    } label: {
+                        Image(systemName: "line.horizontal.3")
+                            .imageScale(.large)
+                            .foregroundColor(showMenu ? .clear : .primary)
+                    }
+                }
+                
+                ToolbarItem(placement: .principal) {
+                    Text(selectedTab.rawValue) // Dynamic title based on tab
+                        .font(.headline)
+                        .opacity(showMenu ? 0 : 1)
+                }
+            }
+            .gesture(
+                DragGesture()
+                    .onEnded { gesture in
+                        if gesture.translation.width > 50 && !showMenu {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                                showMenu = true
+                            }
+                        } else if gesture.translation.width < -50 && showMenu {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                                showMenu = false
+                            }
                         }
                     }
-                
+            )
+            
+            // BottomNavigationView should be INSIDE the outer ZStack
+            if !showMenu {
+                BottomNavigationView(selectedTab: $selectedTab)
+                    .padding(.bottom, 8)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
-
-      
-        
-    
-    
-    
-
     }
 }
 
 #Preview {
     HomeView()
+    
+  
+    .environmentObject(Router())
+    .environmentObject(AuthViewModel())
 }
 
-struct SMSSentView: View {
-    
-    var onClose: () -> Void // Callback for when the view is closed
-       
-       var body: some View {
-           VStack {
-               Text("SMS Sent")
-                   .font(.largeTitle)
-                   .foregroundColor(.blue)
-               
-               Button("Close") {
-                   onClose() // Trigger the callback to remove the item
-               }
-               .padding()
-               .buttonStyle(.borderedProminent)
-           }
-       }
-    
-}
 
-struct WhatsAppView: View {
-    
-    var onClose: () -> Void // Callback for when the view is closed
-       
-       var body: some View {
-           VStack {
-               Text("Whats App Sent")
-                   .font(.largeTitle)
-                   .foregroundColor(.blue)
-               
-               Button("Close") {
-                   onClose() // Trigger the callback to remove the item
-               }
-               .padding()
-               .buttonStyle(.borderedProminent)
-           }
-       }
-}
+
 

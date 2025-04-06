@@ -64,7 +64,8 @@ struct createAccountView: View {
                 
                // presentationMode.wrappedValue.dismiss()
                 
-                router.navigateBack()
+                //router.navigateBack()
+                registerAccount()
                 
             } label: {
                 
@@ -85,6 +86,21 @@ struct createAccountView: View {
     
     var isvalidPassword: Bool {
         password == confirmPassword
+    }
+    
+    func  registerAccount(){
+        
+        Task {
+            
+            do {
+                try await LoginRepository.createUser(
+                        email: "eve.holt@reqres.in",
+                        password: "pistol"
+                    )
+                } catch {
+                    print("Error:", error)
+                }
+        }
     }
 }
 

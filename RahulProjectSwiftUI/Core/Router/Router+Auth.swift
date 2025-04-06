@@ -14,17 +14,22 @@ import SwiftUICore
 extension Router {
     
     @ViewBuilder
-    func destination(for flow : AuthFlow) -> some View {
+    func destination(for flow : Destination) -> some View {
         
         switch flow {
             
-        case .login : LoginView()
+        case .login : LoginNewView()
         case .createAccount(let _name) : createAccountView(name : _name)
         case .forgotPassword : ForgotPasswordView()
         case .emailSent : EmailSentView()
         case .profile(let userProfile ) : ProfileView(myProfile: userProfile)
             
+        case .share: NavigationStackBasicView()
+            
+        case .home: HomeView()
+            
         }
+            
     }
     
 }

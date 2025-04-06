@@ -116,6 +116,9 @@ struct CustomColor {
     static let bg = Color("bg")
     static let skyblue = Color("skyblue")
     
+    static let appGray = Color("appgray")
+    static let appGreen = Color("appgreen")
+    
    
     // Add more here...
     
