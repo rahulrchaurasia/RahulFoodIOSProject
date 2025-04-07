@@ -14,19 +14,18 @@ struct TabContentView: View {
     
     let selectedTab: BottomNavigationView.TabItem
     var body: some View {
-            VStack {
-                // Display different content based on selected tab
-                switch selectedTab {
-                case .home:
-                    HomeContentView()
-                case .transaction:
-                    TransactionContentView()
-                case .carJourney:
-                    CarJourneyContentView()
-                case .notification:
-                    NotificationContentView()
-                }
+        Group {
+            switch selectedTab {
+            case .home:
+                HomeContentView()
+            case .transaction:
+                Text("Transaction Screen")
+            case .carJourney:
+                Text("Car Journey Screen")
+            case .notification:
+                Text("Notification Screen")
             }
+        }
         }
 }
 

@@ -4,54 +4,75 @@
 //
 //  Created by Rahul Chaurasia on 22/11/24.
 //
+/*
+ showMenu && selectedTab == .home :
+ Navigation View Only show when showMenu is true and we selected HomeTab
+ */
 
 import SwiftUI
 
+// Mark : navigationDestination demo
 // Mark : navigationDestination demo
 struct HomeView: View {
     @EnvironmentObject var authVM: AuthViewModel
     @EnvironmentObject var userVM: UserViewModel
     @EnvironmentObject var router: Router
     
-    @State private var tabSelection = 0
     @State private var selectedTab: BottomNavigationView.TabItem = .home
-    
-    // Menu state
     @State private var showMenu = false
     
     var body: some View {
-        ZStack(alignment: .bottom) {
-            ZStack(alignment: .leading) {
-                // Main content
+        ZStack {
+            // Main content including bottom navigation
+            ZStack(alignment: .bottom) {
                 TabContentView(selectedTab: selectedTab)
-                //Mark : Below line handle Side menu,contain open 75 percentage
-                    .offset(x: showMenu ? UIScreen.main.bounds.width * 0.75 : 0)
-                    .scaleEffect(showMenu ? 0.9 : 1)
-                    .shadow(color: showMenu ? .black.opacity(0.2) : .clear, radius: 10)
-                    .disabled(showMenu)
+                    .offset(x: showMenu && selectedTab == .home ? UIScreen.main.bounds.width * 0.75 : 0)
+                    .scaleEffect(showMenu && selectedTab == .home ? 0.9 : 1)
                 
-                //Mark :Side menu, Dark overlay when menu is showing
-                if showMenu {
-                    Color.black
-                        .opacity(0.3)
-                        .ignoresSafeArea()
-                        .transition(.opacity)
-                        .onTapGesture {
+                // Bottom Navigation
+                BottomNavigationView(selectedTab: $selectedTab)
+                    .padding(.bottom, 8)
+                    .offset(x: showMenu && selectedTab == .home ? UIScreen.main.bounds.width * 0.75 : 0)
+                    .scaleEffect(showMenu && selectedTab == .home ? 0.9 : 1)
+                    .onChange(of: selectedTab) { newValue in
+                        if newValue != .home && showMenu {
                             withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                                 showMenu = false
                             }
                         }
-                }
-                
-                // Side menu
-                if showMenu {
+                    }
+            }
+            .shadow(color: showMenu && selectedTab == .home ? .black.opacity(0.2) : .clear, radius: 10)
+            .disabled(showMenu && selectedTab == .home)
+            
+            // Overlay when menu is showing - this needs to be above everything
+            if showMenu && selectedTab == .home {
+                Color.black
+                    .opacity(0.3)
+                    .ignoresSafeArea()
+                    .transition(.opacity)
+                    .onTapGesture {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                            showMenu = false
+                        }
+                    }
+            }
+            
+            // Side menu - this should be the topmost layer
+            if showMenu && selectedTab == .home {
+                HStack(alignment: .top) {
                     SideMenuView(isShowing: $showMenu)
                         .transition(.move(edge: .leading))
+                    
+                    Spacer()
                 }
+                .zIndex(100) // Ensure it's above everything
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                if selectedTab == .home {
                     Button {
                         withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                             showMenu.toggle()
@@ -62,38 +83,31 @@ struct HomeView: View {
                             .foregroundColor(showMenu ? .clear : .primary)
                     }
                 }
-                
-                ToolbarItem(placement: .principal) {
-                    Text(selectedTab.rawValue) // Dynamic title based on tab
-                        .font(.headline)
-                        .opacity(showMenu ? 0 : 1)
-                }
             }
-            .gesture(
-                DragGesture()
-                    .onEnded { gesture in
-                        if gesture.translation.width > 50 && !showMenu {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                                showMenu = true
-                            }
-                        } else if gesture.translation.width < -50 && showMenu {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                                showMenu = false
-                            }
-                        }
-                    }
-            )
             
-            // BottomNavigationView should be INSIDE the outer ZStack
-            if !showMenu {
-                BottomNavigationView(selectedTab: $selectedTab)
-                    .padding(.bottom, 8)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            ToolbarItem(placement: .principal) {
+                Text(selectedTab.rawValue)
+                    .font(.headline)
+                    .opacity(showMenu && selectedTab == .home ? 0 : 1)
             }
         }
+        .gesture(
+            selectedTab == .home ?
+            DragGesture()
+                .onEnded { gesture in
+                    if gesture.translation.width > 50 && !showMenu {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                            showMenu = true
+                        }
+                    } else if gesture.translation.width < -50 && showMenu {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                            showMenu = false
+                        }
+                    }
+                } : nil
+        )
     }
 }
-
 #Preview {
     HomeView()
     

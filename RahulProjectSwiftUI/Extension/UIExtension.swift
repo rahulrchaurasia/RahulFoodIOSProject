@@ -17,45 +17,30 @@ import Foundation
 import SwiftUI
 
 enum Inter: String {
-    case regular = "Inter-Regular"
-    case medium = "Inter-Medium"
-    case semibold = "Inter-SemiBold"
-    case bold = "Inter-Bold"
+        case regular = "inter_regular"
+       case medium = "inter_semibold"
+
+       case bold = "inter_bold"
 }
 
-enum Gilroy: String {
-    case regular = "Gilroy-Regular"
-    case medium = "Gilroy-Medium"
-    case semibold = "Gilroy-SemiBold"
-    case bold = "Gilroy-Bold"
-    
-   
-    
-}
-
-enum NunitoSans: String {
-    case regular = "NunitoSans10pt-Regular"
-    case medium = "NunitoSans10pt-Medium"
-    case semibold = "NunitoSans10pt-SemiBold"
-    case bold = "NunitoSans10pt-Bold"
-    case extraBold = "NunitoSans10pt-ExtraBold"
-}
 
 
 extension Font {
     
-    static func customfont(_ font: NunitoSans, fontSize: CGFloat) -> Font {
+   
+    static func customfont(_ font: Inter, fontSize: CGFloat) -> Font {
         custom(font.rawValue, size: fontSize)
-    }
-    static func customfont1(_ font: Gilroy, fontSize: CGFloat) -> Font {
-        custom(font.rawValue, size: fontSize)
+        
     }
     
-    static func customfont2(_ font: Inter, fontSize: CGFloat) -> Font {
-        custom(font.rawValue, size: fontSize)
-    }
+    static let appHeader = Font.custom(Inter.bold.rawValue, size: 28)
+    static let appTitle = Font.custom(Inter.bold.rawValue, size: 24)
+    static let appLarge = Font.custom(Inter.bold.rawValue, size: 20)
+    static let appMedium = Font.custom(Inter.medium.rawValue, size: 16)
+    static let appMediumRegular = Font.custom(Inter.regular.rawValue, size: 16)
+    static let appSmall = Font.custom(Inter.medium.rawValue, size: 14)
+    static let appSmallRegular = Font.custom(Inter.regular.rawValue, size: 14)
 }
-
 extension CGFloat {
     
     static var screenWidth: Double {

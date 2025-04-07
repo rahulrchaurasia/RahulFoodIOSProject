@@ -37,7 +37,7 @@ struct OnboardingButtonView: View {
             } label: {
                
                 Text(buttonTitle)
-                    .font(.customfont(.semibold, fontSize: 20))
+                    .font(.customfont(.bold, fontSize: 20))
                     .foregroundStyle(.white)
                     .padding(.vertical, 16)
                     .padding(.horizontal, 60)
