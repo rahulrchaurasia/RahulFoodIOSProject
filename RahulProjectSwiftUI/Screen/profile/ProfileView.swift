@@ -11,7 +11,7 @@ struct ProfileView: View {
     
     @EnvironmentObject var authVM : AuthViewModel  // Common ViewModel
     
-    @EnvironmentObject var router : Router
+    @EnvironmentObject var router : AppStateRouter
     
     @StateObject private var viewModel = ProfileImageVM()
     
@@ -22,118 +22,132 @@ struct ProfileView: View {
    // let name : String
     
     var body: some View {
-        VStack {
-            ZStack {
-                Circle()
-                    .fill(Color.gray.opacity(0.2))
-                    .frame(width: 150, height: 150)
+        
+        VStack(spacing:0){
+            
+            // Add custom header at the top
+            CustomNavigationBar(title: "Profile", showBackButton: true) {
                 
-                if let image = viewModel.profileImage {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 150, height: 150)
-                        .clipShape(Circle())
-                } else {
-                    Image(systemName: "person.circle.fill")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 150, height: 150)
-                        .foregroundColor(.gray)
-                }
-                
-            //Mark :Open the BottomSheet Dialog using showMediaPicker
-                Button(action: { viewModel.showMediaPicker = true }) {
-                    ZStack {
-                        Circle()
-                            .fill(Color.blue)
-                            .frame(width: 40, height: 40)
-                        
-                        Image(systemName: "pencil")
-                            .foregroundStyle(.white)
-                    }
-                }
-                .offset(x: 50, y: 50)
+                router.navigateBack()
             }
-            .padding(.top, 50)
-            
-            Spacer()
-            
-            List{
-                
-                Section{
+            VStack {
+                ZStack {
                     
-                    HStack{
-                        
-                        Text("RC")
-                            .font(.title)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(.white)
-                            .frame(width: 70, height: 70)
-                            .background(Color(.lightGray))
+                    Circle()
+                        .fill(Color.gray.opacity(0.2))
+                        .frame(width: 150, height: 150)
+                    
+                    if let image = viewModel.profileImage {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 150, height: 150)
                             .clipShape(Circle())
-                        
-                        VStack(alignment: .leading, spacing: 4){
+                    } else {
+                        Image(systemName: "person.circle.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 150, height: 150)
+                            .foregroundColor(.gray)
+                    }
+                    
+                //Mark :Open the BottomSheet Dialog using showMediaPicker
+                    Button(action: { viewModel.showMediaPicker = true }) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.blue)
+                                .frame(width: 40, height: 40)
                             
-                            Text(myProfile.name)
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(Color.appblack )
-                            
-                            Text(myProfile.designation ?? "No Designation")
-                                .font(.footnote)
-                                .foregroundStyle(Color.statusBar)
-                                
+                            Image(systemName: "pencil")
+                                .foregroundStyle(.white)
                         }
                     }
+                    .offset(x: 50, y: 50)
                 }
+                .padding(.top, 50)
                 
-                Section("Account") {
+                Spacer()
+                
+                List{
                     
-                    Button {
+                    Section{
                         
-                    } label: {
-                       
-                        Label {
-                           
-                            Text("Sign Out")
-                                .fontWeight(.semibold)
-                                .foregroundStyle(Color.appblack)
-                        } icon: {
+                        HStack{
                             
-                            Image(systemName: "arrow.left.circle.fill")
-                                .foregroundStyle(.red)
+                            Text("RC")
+                                .font(.title)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.white)
+                                .frame(width: 70, height: 70)
+                                .background(Color(.lightGray))
+                                .clipShape(Circle())
+                            
+                            VStack(alignment: .leading, spacing: 4){
+                                
+                                Text(myProfile.name)
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(Color.appblack )
+                                
+                                Text(myProfile.designation ?? "No Designation")
+                                    .font(.footnote)
+                                    .foregroundStyle(Color.statusBar)
+                                    
+                            }
+                        }
+                    }
+                    
+
+                    Section("Account") {
+                        
+                        Button {
+                            
+                        } label: {
+                           
+                            Label {
+                               
+                                Text("Sign Out")
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(Color.appblack)
+                            } icon: {
+                                
+                                Image(systemName: "arrow.left.circle.fill")
+                                    .foregroundStyle(.red)
+                            }
+
+                        }
+                        
+                        Button {
+                            
+                        } label: {
+                           
+                            Label {
+                               
+                                Text("Delete Account")
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(Color.appblack)
+                            } icon: {
+                                
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundStyle(.red)
+                            }
+
                         }
 
                     }
-                    
-                    Button {
-                        
-                    } label: {
-                       
-                        Label {
-                           
-                            Text("Delete Account")
-                                .fontWeight(.semibold)
-                                .foregroundStyle(Color.appblack)
-                        } icon: {
-                            
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundStyle(.red)
-                        }
-
-                    }
-
+                  
                 }
-              
+               
+                .scrollContentBackground(.hidden) // Disable default background
+                .background(.blue.opacity(0.1)) // Light red background
+                 
             }
-           
-            .scrollContentBackground(.hidden) // Disable default background
-            .background(.blue.opacity(0.1)) // Light red background
-             
         }
-        
-        
+     
+        .navigationTitle("")
+        .navigationBarHidden(true)
+        .navigationBarBackButtonHidden(true)
+      
         .sheet(isPresented: $viewModel.showCamera) {
             CameraView(image: $viewModel.profileImage)
         }
@@ -165,9 +179,12 @@ struct ProfileView: View {
     }
 }
 
-#Preview {
-    
+#Preview
+{
     let profile = UserProfile(name: "Umesh", age: 32, gender: .male)
-    ProfileView( myProfile: profile)
-        .environmentObject(AuthViewModel())
+    ProfileView(myProfile: profile)
+        .environmentObject(AuthViewModel(userRepository: DependencyContainer().userRepository))
+    
 }
+
+

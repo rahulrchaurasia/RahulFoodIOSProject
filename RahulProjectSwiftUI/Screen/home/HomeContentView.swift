@@ -10,7 +10,10 @@ import SwiftUI
 
 struct HomeContentView: View {
     @EnvironmentObject var userVM: UserViewModel
-    @EnvironmentObject var router: Router
+    @EnvironmentObject var router: AppStateRouter
+    
+    // Use ObservedObject since the view model is created at the parent level
+    @ObservedObject var homeVM: HomeViewModel
     
     // Constants for navigation height
     private let bottomNavHeight: CGFloat = 60
@@ -24,44 +27,12 @@ struct HomeContentView: View {
                 .ignoresSafeArea()
             
             // Scrollable content with clipping at bottom
-            ScrollView {
+            ScrollView (showsIndicators: false){
                 VStack(spacing: 16) {
-                    Text("Home")
-                        .font(.title)
-                        .fontWeight(.heavy)
-                        .padding(.top)
-
-                    Text(UserDefaultsManager.shared.loggedInUserName)
-                        .font(.title)
-                        .fontWeight(.heavy)
-
-                    Button {
-                        userVM.logout()
-                        router.setRoot(_root: .loginModule)
-                    } label: {
-                        AppButton(title: "Log-Out")
-                    }
-
-                    Text("text data\ndata edwdw dewdwdwbdwdw edwedwe")
-                        .font(.body)
-                        .fontWeight(.heavy)
-                        .multilineTextAlignment(.center)
-                        .padding()
-
-                    Spacer().frame(height: 200)
-
-                    Text("text2 data\ndata edwdw dewdwdwbdwdw edwedwe")
-                        .multilineTextAlignment(.leading)
                     
-                    Spacer().frame(height: 50)
                     
-                    Text("text3 data\ndata edwdw dewdwdwbdwdw edwedwe")
-                        .multilineTextAlignment(.leading)
-                    
-                    Spacer().frame(height: 50)
-                    
-                    Text("text4 data\ndata edwdw dewdwdwbdwdw edwedwe")
-                        .multilineTextAlignment(.leading)
+                    // Display content based on food data state
+                    foodContentView
                     
                     // Add bottom padding that matches navigation height
                     Spacer().frame(height: bottomNavHeight + bottomPadding + CGFloat.bottomInsets)
@@ -70,22 +41,149 @@ struct HomeContentView: View {
                 .padding()
             }
             
-            // Bottom mask to hide scrolled content
-            VStack {
-                Spacer()
-                Rectangle()
-                    .fill(Color.bg)
-                    .frame(height: bottomNavHeight + bottomPadding + CGFloat.bottomInsets)
-                    .allowsHitTesting(false) // Let touches pass through
+            // Loading indicator
+            if case .loading = homeVM.state {
+                ProgressView()
+                    .scaleEffect(1.5)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color.black.opacity(0.1))
             }
-            .ignoresSafeArea()
+            
+            // Bottom mask to hide scrolled content
+            bottomMask
         }
+        .refreshable {
+            // Use the explicit refresh function when user pulls to refresh
+            await homeVM.refreshFoodDetails()
+        }
+        
+//        .task {
+//            await homeVM.getFoodDetails()
+//        }
+//       
+//        .alert(homeVM.alertState.title, isPresented: $homeVM.showError, actions: {
+//            Button("OK", role: .none, action: {})
+//        }, message: {
+//            Text(userVM.errorMessage)
+//        })
     }
+    
+    
+    private var bottomMask : some View {
+        VStack {
+            Spacer()
+            Rectangle()
+                .fill(Color.bg)
+                .frame(height: bottomNavHeight + bottomPadding + CGFloat.bottomInsets)
+                .allowsHitTesting(false) // Let touches pass through
+        }
+        .ignoresSafeArea()
+    }
+    
+    
+    
+    // MARK: - Food Content View
+     @ViewBuilder
+     private var foodContentView: some View {
+         switch homeVM.state {
+         case .idle:
+             Text("Tap to load food data")
+                 .font(.body)
+                 .foregroundColor(.secondary)
+                 .onAppear {
+                     Task {
+                         await homeVM.getFoodDetails()
+                     }
+                 }
+                 
+         case .loading:
+             // Loading is handled by the overlay
+             EmptyView()
+                 
+         case .success(let dishData):
+             // Display food data
+             VStack(alignment: .leading, spacing: 24) {
+                 // Popular dishes section
+                 if !dishData.populars.isEmpty {
+                     Text("Popular Dishes")
+                         .font(.headline)
+                         .padding(.top)
+                     
+                     ScrollView(.horizontal, showsIndicators: false) {
+                         HStack(spacing: 16) {
+                             ForEach(dishData.populars) { dish in
+                                 DishCard(dish: dish)
+                             }
+                         }
+                     }
+                 }
+                 
+                 
+                 // Categories section
+                 if !dishData.categories.isEmpty {
+                     Text("Categories")
+                         .font(.headline)
+                         .padding(.top)
+                     
+                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                         ForEach(dishData.categories) { category in
+                             CategoryCard(category: category)
+                         }
+                     }
+                 }
+                 
+                 // Special dishes section
+                 if !dishData.specials.isEmpty {
+                     Text("Special Offers")
+                         .font(.headline)
+                         .padding(.top)
+                     
+                     ForEach(dishData.specials) { dish in
+                         SpecialDishCard(dish: dish)
+                     }
+                 }
+             }
+                 
+
+         case .error(let error):
+             VStack {
+                 Image(systemName: "exclamationmark.triangle")
+                     .font(.largeTitle)
+                     .foregroundColor(.red)
+                     .padding()
+                 
+                 Text("Could not load food data")
+                     .font(.headline)
+                 
+                 Text(error.localizedDescription)
+                     .font(.subheadline)
+                     .foregroundColor(.secondary)
+                     .multilineTextAlignment(.center)
+                     .padding()
+                 
+                 Button("Try Again") {
+                     Task {
+                         await homeVM.getFoodDetails()
+                     }
+                 }
+                 .buttonStyle(.bordered)
+                 .padding()
+             }
+             .padding()
+         }
+     }
+    
 }
 
 
     
 // Preview for HomeContentView
     #Preview {
-        HomeContentView()
+        
+        let container = PreviewDependencies.container
+           let homeVM = container.makeHomeViewModel()
+           
+        HomeContentView(homeVM: homeVM)
+            .environmentObject(Router(container: container))
+               .environmentObject(UserViewModel())
     }

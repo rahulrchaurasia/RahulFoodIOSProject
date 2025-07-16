@@ -11,7 +11,7 @@ struct OnboardingView: View {
     
     // router.setRoot(_root: .loginModule)
     // @EnvironmentObject var authVM : AuthViewModel
-    @EnvironmentObject var router : Router
+    @EnvironmentObject var router : AppStateRouter
     @StateObject private var vm = OnboardingViewModel()
     var body: some View {
        
@@ -49,7 +49,7 @@ struct OnboardingView: View {
                         Button {
                             //set loginModule
                             vm.skipOnboarding()
-                            router.setRoot(_root: .loginModule)
+                            router.setRoot( .loginModule)
                         } label: {
                             Text("Skip")
                                 .foregroundColor(.blue)

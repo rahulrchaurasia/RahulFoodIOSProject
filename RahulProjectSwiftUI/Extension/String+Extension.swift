@@ -23,7 +23,31 @@ import Foundation
 extension String
 {
     
-    
+   // Mark : Demo for below
+    /*
+     if !dob.isEmpty {
+         let inputFormats = ["yyyy-MM-dd", "dd-MM-yyyy", "dd/MM/yyyy"]
+         if let dobFormatted = dob.toDateStringWithFallback(formats: inputFormats, outputFormat: "yyyy-MM-dd") {
+             wegUser.setBirthDateString(dobFormatted)
+         } else {
+             wegUser.setBirthDateString("") // Invalid date
+             debugPrint("Invalid date format for DOB: \(dob)")
+         }
+     }
+     */
+    func toDateStringWithFallback(formats: [String], outputFormat: String) -> String? {
+            let dateFormatter = DateFormatter()
+            dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+            
+            for format in formats {
+                dateFormatter.dateFormat = format
+                if let date = dateFormatter.date(from: self) {
+                    dateFormatter.dateFormat = outputFormat
+                    return dateFormatter.string(from: date)
+                }
+            }
+            return nil
+        }
     
     func toDateString(inputDateFormat inputFormat: String, outputDateFormat outputFormat: String) -> String? {
             let dateFormatter = DateFormatter()

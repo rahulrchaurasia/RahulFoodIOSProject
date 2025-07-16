@@ -8,12 +8,25 @@
 import SwiftUI
 
 import SwiftUI
+/*
+ //Mark  VVIMP : this is also way to get userViewModel
+// @StateObject var userViewModel = UserViewModel(userRepository: UserRepository(apiService: APIService()))
 
+ or
+ user global way  userVM: UserViewModel
+ */
 struct LoginNewView: View {
     @EnvironmentObject var userVM: UserViewModel
-    @EnvironmentObject var router: Router
+    @EnvironmentObject var router: AppStateRouter
+    
+    @EnvironmentObject var loginRouter: LoginFlowRouter // 👈 new mini router only for login
     
     @FocusState private var focusField: LoginField?
+    
+    // In your parent view:
+    //Mark  VVIMP : this is also way to get userViewModel
+   // @StateObject var userViewModel = UserViewModel(userRepository: UserRepository(apiService: APIService()))
+
     
     var body: some View {
         ZStack {
@@ -92,7 +105,7 @@ struct LoginNewView: View {
         // ↓↓↓ CHANGES HERE - Use isLoginSuccessful instead of loginState ↓↓↓
         .onChange(of: userVM.isLoginSuccessful) { isSuccessful in
             if isSuccessful {
-                router.setRoot(_root: .dashboardModule)
+                router.setRoot( .dashboardModule)
             }
         }
         .onSubmit {
@@ -168,7 +181,8 @@ struct LoginNewView: View {
             Spacer()
             
             Button {
-                router.navigate(to: .forgotPassword)
+               // router.navigate(to: .forgotPassword)
+                loginRouter.navigate(to: .forgotPassword)
             } label: {
                 Text("Forgot Password")
                     .foregroundStyle(.gray)
@@ -190,7 +204,7 @@ struct LoginNewView: View {
     private var socialLoginOptions: some View {
         VStack(spacing: 10) {
             Button {
-                router.navigate(to: .share)
+                loginRouter.navigate(to: .share)
             } label: {
                 Label("Sign up with Apple", systemImage: "apple.logo")
             }
@@ -201,6 +215,7 @@ struct LoginNewView: View {
             Button {
                 let profile = UserProfile(name: "Rahul", age: 32, gender: .male, designation: "Android Developer")
                 router.navigate(to: .profile(userProfile: profile))
+                
             } label: {
                 HStack {
                     Image("check_list")
@@ -222,7 +237,7 @@ struct LoginNewView: View {
     
     private var footerView: some View {
         Button {
-            router.navigate(to: .createAccount(name: "Data From Login"))
+            loginRouter.navigate(to: .createAccount(name: "Data From Login"))
         } label: {
             HStack {
                 Text("Don't have an account")
@@ -262,7 +277,7 @@ struct LoginNewView: View {
         }
     }
     
-    // MARK: - Actions
+    // MARK: - Actions : Login Api
     private func authenticate() {
         Task {
             await userVM.login()
@@ -285,7 +300,7 @@ struct LoginNewView: View {
     private func handleLoginStateChange(_ newState: ViewState<User>) {
         if case .success = newState {
             // Navigate to dashboard on successful login
-            router.setRoot(_root: .dashboardModule)
+            router.setRoot(.dashboardModule)
         }
     }
     
@@ -325,10 +340,13 @@ struct LoginNewView: View {
 
 // MARK: - Preview
 struct LoginNewView_Previews: PreviewProvider {
+    
     static var previews: some View {
+        
+        let container = PreviewDependencies.container
         LoginNewView()
             .environmentObject(UserViewModel())
-            .environmentObject(Router())
+            .environmentObject(Router(container: container))
     }
 }
 //#Preview {

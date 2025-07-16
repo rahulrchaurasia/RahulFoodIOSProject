@@ -18,6 +18,8 @@ final class AuthViewModel : ObservableObject {
     @AppStorage("isFirstLaunch") private var isFirstLaunch: Bool = true
     @AppStorage("userEmail") private var storedEmail: String = ""
     
+    private let userRepository: UserRepositoryProtocol
+    
     @Published var currentAuthState: AuthState = .onboardingModule
     
     @Published var isLoggedIn : Bool = false
@@ -43,19 +45,21 @@ final class AuthViewModel : ObservableObject {
    
     @Published var errorField: LoginField1? // Track which field has error
     
-    
-    private let userRepository: UserRepositoryProtocol
         
         // Add a state property for user data
         @Published private(set) var userState: ViewState<[User]> = .idle
         
-    
+    //007
     // Modified initializer to accept repository
-    init(userRepository: UserRepositoryProtocol = UserRepository()) {
+//    init(userRepository: UserRepositoryProtocol = UserRepository(apiService: APIService.init())) {
+//        self.userRepository = userRepository
+//            // Load saved state
+//            email = storedEmail
+//            reset()
+//    }
+    
+    init(userRepository: UserRepositoryProtocol) {
         self.userRepository = userRepository
-            // Load saved state
-            email = storedEmail
-            reset()
     }
     
     // MARK: - Logout

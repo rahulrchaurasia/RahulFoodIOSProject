@@ -8,11 +8,19 @@
 import Foundation
 
 actor UserRepository: UserRepositoryProtocol {
-    private let apiService: APIService
+    private let apiService: APIServiceProtocol
     
-    init(apiService: APIService = APIService.shared) {
-        self.apiService = apiService
-    }
+//    init(apiService: APIService = APIService.shared) {
+//        self.apiService = apiService
+//    }
+    
+    // Remove the default parameter that references a singleton
+        init(apiService: APIServiceProtocol) {
+            self.apiService = apiService
+            
+            // self.authToken = tokenManager.currentToken  
+        }
+
     
     func getUserByEmail(_ email: String) async throws -> [User] {
         let requestBody = UserEmailRequest(emailid: email)
@@ -21,9 +29,11 @@ actor UserRepository: UserRepositoryProtocol {
         let response: UserResponse = try await apiService.request(
             endpoint: "gettestUserByEmail",
             method: .post,
+            urlType: .primary,
             headers: headers,
            
-            body: requestBody
+            body: requestBody,
+            queryItems: nil
         )
         
         return response.masterData
@@ -31,5 +41,6 @@ actor UserRepository: UserRepositoryProtocol {
 }
 
 extension UserRepository {
-    static let shared = UserRepository()
+   // static let shared = UserRepository(apiService: <#APIService#>)
+    static let shared = UserRepository(apiService: APIService())
 }

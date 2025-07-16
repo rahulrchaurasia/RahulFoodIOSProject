@@ -14,6 +14,16 @@ enum ViewState<T> {
     case loading
     case success(T)
     case error(NetworkError)
+    
+    /*
+   Mark :  The line guard !state.isLoading else { return } acts as a protective gate that prevents duplicate network requests when data is already being loaded. Here's a detailed breakdown:
+
+
+     */
+    var isLoading: Bool {
+          if case .loading = self { return true }
+          return false
+      }
 }
 
 extension ViewState: Equatable where T: Equatable {

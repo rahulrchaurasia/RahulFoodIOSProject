@@ -10,7 +10,7 @@ import SwiftUI
 struct EmailSentView: View {
     
     @State var email: String = ""
-    @EnvironmentObject var router : Router
+    @EnvironmentObject var router : AppStateRouter
     var body: some View {
         
         VStack(spacing: 24) {

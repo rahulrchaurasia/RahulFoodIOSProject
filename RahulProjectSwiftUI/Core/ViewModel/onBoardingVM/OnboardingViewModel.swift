@@ -12,6 +12,8 @@ class OnboardingViewModel : ObservableObject {
     
     
     @Published var currentPage = 0
+    
+    //Mark: This sets the default value to false if there’s no existing value in UserDefaults for that key.
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
         
     

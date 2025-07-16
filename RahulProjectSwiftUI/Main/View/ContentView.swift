@@ -9,26 +9,41 @@ import SwiftUI
 
 struct ContentView: View {
     
+    let container: DependencyContainer
     @EnvironmentObject var authVM : AuthViewModel
     @EnvironmentObject var userVM : UserViewModel
-    @EnvironmentObject var router : Router
+  
+    @EnvironmentObject var router : AppStateRouter
+    
+    
+    @StateObject private var loginRouter = LoginFlowRouter()
     var body: some View {
-       // Group {
+        // Group {
         switch router.root {
-            case .onboardingModule:
-                 OnboardingView()
-               // LoginView()
-            case .loginModule:
-                LoginNewView()
-            case .dashboardModule:
-                HomeView()
-            }
-       // }
-       // .animation(.easeInOut, value: authVM.currentAuthState)
+        case .onboardingModule:
+            OnboardingView()
+            // LoginView()
+        case .loginModule:
+            
+             LoginNewView()
+           
+        case .dashboardModule:
+            HomeView(repository: container.makeHomeRepository())
+         
+            
+        }
+        // }
+        // .animation(.easeInOut, value: authVM.currentAuthState)
     }
 
 }
 
 #Preview {
-    ContentView()
+    
+    
+    let container = DependencyContainer()
+    ContentView(container: container)
+        .environmentObject(AuthViewModel(userRepository: DependencyContainer().userRepository))
+           .environmentObject(UserViewModel())
+           .environmentObject(Router(container: container))
 }

@@ -1,21 +1,17 @@
 //
-//  APIService.swift
+//  APIService1.swift
 //  RahulProjectSwiftUI
 //
-//  Created by Rahul Chaurasia on 01/04/25.
+//  Created by Rahul Chaurasia on 11/04/25.
 //
 
 import Foundation
 
-
-
-// MARK: - APIService
-// MARK: - APIService
-
-actor APIService {
+//Using Singleton Way
+actor APIService1 {
 
     // Singleton
-    static let shared = APIService()
+    static let shared = APIService1()
 
     // Default environment
     var environment: APIEnvironment = .production
@@ -25,7 +21,7 @@ actor APIService {
 
     private init() {
         let configuration = URLSessionConfiguration.default
-        configuration.timeoutIntervalForRequest = 30
+        configuration.timeoutIntervalForRequest = 60 //previosly iot was 30 sec
         configuration.waitsForConnectivity = true
         self.session = URLSession(configuration: configuration)
     }
@@ -34,7 +30,8 @@ actor APIService {
     func request<T: Decodable>(
         endpoint: String = "",
         method: HTTPMethod = .get,
-        baseURL: String? = nil,
+        urlType: URLType = .primary,
+       // baseURLType: APIEnvironment.BaseURLType = .primary,
         headers: [String: String] = [:],
         body: Encodable? = nil,
         queryItems: [URLQueryItem]? = nil
@@ -42,19 +39,21 @@ actor APIService {
 
         // Determine full URL
         let fullURL: URL = try {
-            // If full URL is passed directly
-            if let fullURL = URL(string: endpoint), endpoint.starts(with: "http") {
-                return fullURL
-            }
-
-            let base = baseURL ?? environment.primaryBaseURL
+           
+            // Use the selected URL type
+            let base = urlType.getURL(for: environment)
+            
+            // Handle URL construction more safely
             guard var components = URLComponents(string: base) else {
                 throw NetworkError.invalidURL
             }
 
-            // Cleanly join endpoint path
-            components.path = (components.path as NSString).appendingPathComponent(endpoint)
-
+            // Add the endpoint if it's not empty
+            //Mark: This method automatically handles slashes between components, so you don’t get a double slash (//) even if:
+            if !endpoint.isEmpty {
+                components.path = (components.path as NSString).appendingPathComponent(endpoint)
+            }
+           
             // Add query items for GET
             if method == .get, let queryItems = queryItems {
                 components.queryItems = queryItems
@@ -124,5 +123,21 @@ actor APIService {
             throw NetworkError.networkError(error)
         }
     }
+    
+    // Convenient method for external APIs
+        func requestExternalAPI<T: Decodable>(
+            url: String,
+            method: HTTPMethod = .get,
+            headers: [String: String] = [:],
+            body: Encodable? = nil,
+            queryItems: [URLQueryItem]? = nil
+        ) async throws -> T {
+            return try await request(
+                endpoint: url,
+                method: method,
+                headers: headers,
+                body: body,
+                queryItems: queryItems
+            )
+        }
 }
-

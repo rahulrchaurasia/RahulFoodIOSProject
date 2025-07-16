@@ -38,6 +38,25 @@ enum APIEnvironment {
     }
 }
 
+// Simple URL type enum
+enum URLType {
+    case primary
+    case secondary
+    case custom(String)
+    
+    func getURL(for environment: APIEnvironment) -> String {
+        switch self {
+        case .primary:
+            return environment.primaryBaseURL
+        case .secondary:
+            return environment.secondaryBaseURL
+        case .custom(let url):
+            return url
+        }
+    }
+}
+
+
 /*
  
  Usage Examples

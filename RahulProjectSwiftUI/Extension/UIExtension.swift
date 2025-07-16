@@ -61,6 +61,15 @@ extension CGFloat {
     
     
     static func getSafeArea() -> UIEdgeInsets {
+        guard let window = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .flatMap({ $0.windows })
+            .first(where: { $0.isKeyWindow }) else {
+            return .zero
+        }
+        return window.safeAreaInsets
+    }
+    static func getSafeArea2() -> UIEdgeInsets {
         
         guard let screen = UIApplication.shared.connectedScenes.first as?
                 UIWindowScene else {
@@ -75,38 +84,56 @@ extension CGFloat {
         
     }
    
-    static var topInsets: Double {
-        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-            return Double(scene.windows.first?.safeAreaInsets.top ?? 50)
-        }
-        return 0.0
-        
+    static var topInsets: CGFloat {
+          getSafeArea().top
+      }
+
+      static var bottomInsets: CGFloat {
+          getSafeArea().bottom
+      }
+    
+    static var horizontalInsets: CGFloat {
+        let insets = getSafeArea()
+        return insets.left + insets.right
+    }
+
+    static var verticalInsets: CGFloat {
+        let insets = getSafeArea()
+        return insets.top + insets.bottom
     }
     
+//    static var topInsets: Double {
+//        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+//            return Double(scene.windows.first?.safeAreaInsets.top ?? 50)
+//        }
+//        return 0.0
+//        
+//    }
+//    
+//    
+//    static var bottomInsets: Double {
+//        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+//            return Double(scene.windows.first?.safeAreaInsets.bottom ?? 50)
+//        }
+//        return 0.0
+//    }
     
-    static var bottomInsets: Double {
-        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-            return Double(scene.windows.first?.safeAreaInsets.bottom ?? 50)
-        }
-        return 0.0
-    }
-    
-    static var horizontalInsets: Double {
-        
-        
-        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-            return Double(scene.windows.first?.safeAreaInsets.left ?? 8 + (scene.windows.first?.safeAreaInsets.right ?? 8) )
-        }
-        return 0.0
-    }
-    
-    static var verticalInsets: Double {
-        
-        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-            return Double(scene.windows.first?.safeAreaInsets.top ?? 10 + (scene.windows.first?.safeAreaInsets.bottom ?? 10) )
-        }
-        return 0.0
-    }
+//    static var horizontalInsets: Double {
+//        
+//        
+//        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+//            return Double(scene.windows.first?.safeAreaInsets.left ?? 8 + (scene.windows.first?.safeAreaInsets.right ?? 8) )
+//        }
+//        return 0.0
+//    }
+//    
+//    static var verticalInsets: Double {
+//        
+//        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+//            return Double(scene.windows.first?.safeAreaInsets.top ?? 10 + (scene.windows.first?.safeAreaInsets.bottom ?? 10) )
+//        }
+//        return 0.0
+//    }
     
 }
 

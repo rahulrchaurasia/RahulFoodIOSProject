@@ -51,6 +51,10 @@ final class UserDefaultsManager {
     var loggedInUserMobile: String {
         getLoggedInUser()?.mobile ?? ""
     }
+    
+    var loggedInUserEmail: String {
+        getLoggedInUser()?.email ?? ""
+    }
 
     var loggedInUserCity: String {
         getLoggedInUser()?.address.city ?? ""

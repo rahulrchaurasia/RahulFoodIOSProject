@@ -10,27 +10,33 @@ import SwiftUI
 struct TabContentView: View {
     
     @EnvironmentObject var userVM: UserViewModel
-    @EnvironmentObject var router: Router
+    @EnvironmentObject var router: AppStateRouter
+    
+    @ObservedObject var homeVM: HomeViewModel
     
     let selectedTab: BottomNavigationView.TabItem
     var body: some View {
         Group {
             switch selectedTab {
             case .home:
-                HomeContentView()
+                HomeContentView( homeVM: homeVM)
             case .transaction:
-                Text("Transaction Screen")
+                TransactionContentView()
             case .carJourney:
-                Text("Car Journey Screen")
+                CarJourneyContentView()
             case .notification:
-                Text("Notification Screen")
+                NotificationContentView()
             }
         }
-        }
+    }
 }
 
 #Preview {
     
+    let apiService = APIService()
+    let homeRepository = HomeRepository(apiService: apiService)
+   
+    let homeVM = HomeViewModel(homeRepository: homeRepository)
     let selectedTab = BottomNavigationView().selectedTab
-    TabContentView(selectedTab: selectedTab)
+    TabContentView(homeVM: homeVM, selectedTab: selectedTab)
 }

@@ -434,7 +434,9 @@ private extension LoginView {
 }
 #Preview {
     LoginView()
-        .environmentObject(AuthViewModel())
+        .environmentObject(AuthViewModel(userRepository: DependencyContainer().userRepository))
+    
+        
 }
 
 

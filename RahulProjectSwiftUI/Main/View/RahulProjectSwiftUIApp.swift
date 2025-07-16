@@ -12,38 +12,84 @@ import SwiftUI
 @main
 struct RahulProjectSwiftUIApp: App {
     
-    // register app delegate for Firebase setup
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    private let container: DependencyContainer
     
-    @StateObject private var authVM = AuthViewModel()
-    @StateObject private var userVM = UserViewModel()
+    
+    // 2. Declare StateObjects without initialization
+    @StateObject private var userVM: UserViewModel
 
-    @StateObject private var router = Router()
+    @StateObject private var router: AppStateRouter
+    
+    // 3. Initialize everything in init()
+    init()
+    {
+        //Lazy Initialization (Recommended)
+        let container = DependencyContainer()
+        self.container = container
+        _userVM = StateObject(wrappedValue: UserViewModel())
+        _router = StateObject(wrappedValue: AppStateRouter(container: container))
+    }
     
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $router.navPath) {
-                
-                ContentView()
-                    .navigationDestination(for: Router.Destination.self) { destination in
-                        
-                        router.destination(for: destination)
-                    }
-//                if router.root == .loginModule {
-//                   
-//                    LoginView()
-//                }else{
-//                    HomeView()
-//                        .navigationDestination(for: Router.Destination.self) { destination in
-//                            
-//                            router.destination(for: destination)
-//                        }
-//                }
-               
-            }
-            .environmentObject(authVM )
-            .environmentObject(userVM )
-            .environmentObject(router)
+                           ContentView(container: container)
+                       }
+                       .environmentObject(container.makeAuthViewModel())
+                       .environmentObject(userVM)
+                       .environmentObject(router)
         }
     }
 }
+
+
+
+
+
+//struct RahulProjectSwiftUIApp: App {
+//    
+//    private let container: DependencyContainer
+//    
+//    //    @StateObject private var userVM = UserViewModel()
+//    
+//    // 2. Declare StateObjects without initialization
+//    @StateObject private var userVM: UserViewModel
+//    // @StateObject private var router: Router
+//    
+//    @StateObject private var router: AppStateRouter
+//    
+//    // 3. Initialize everything in init()
+//    init()
+//    {
+//        //Lazy Initialization (Recommended)
+//        let container = DependencyContainer()
+//        self.container = container
+//        _userVM = StateObject(wrappedValue: UserViewModel())
+//        // _router = StateObject(wrappedValue: Router(container: container))
+//        _router = StateObject(wrappedValue: AppStateRouter(container: container))
+//    }
+//    
+//    var body: some Scene {
+//        WindowGroup {
+//            NavigationStack(path: $router.navPath) {
+//                
+//                
+//                //                ContentView(container: container)
+//                //                    .navigationDestination(for: Router.Destination.self) { destination in
+//                //
+//                //                        router.destination(for: destination)
+//                //                    }
+//                
+//                ContentView(container: container)
+//                    .navigationDestination(for: AppRoute.self) { route in
+//                        route.destinationView
+//                    }
+//                
+//                
+//            }
+//            .environmentObject(container.makeAuthViewModel())  // Auth is often app-wide
+//            .environmentObject(userVM )
+//            .environmentObject(router)
+//        }
+//    }
+//}

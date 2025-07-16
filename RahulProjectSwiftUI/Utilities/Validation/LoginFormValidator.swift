@@ -50,7 +50,7 @@ enum LoginField: Int, FormField, CaseIterable {
 
  */
 class LoginFormValidator: FormValidator {
-    typealias Field = LoginField
+  //  typealias Field = LoginField
     
     private var email: String
     private var password: String

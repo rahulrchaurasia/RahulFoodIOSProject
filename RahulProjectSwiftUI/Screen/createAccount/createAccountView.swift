@@ -15,7 +15,7 @@ struct createAccountView: View {
     @State var confirmPassword: String = ""
     
     @EnvironmentObject var authVM : AuthViewModel
-    @EnvironmentObject var router : Router
+    @EnvironmentObject var router : AppStateRouter
     
     var name : String = ""
   //  @Environment(\.presentationMode) var presentationMode
@@ -106,5 +106,5 @@ struct createAccountView: View {
 
 #Preview {
     createAccountView( name: "Rahul")
-        .environmentObject(AuthViewModel())
+        .environmentObject(AuthViewModel(userRepository: DependencyContainer().userRepository))
 }

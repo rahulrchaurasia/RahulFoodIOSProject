@@ -17,6 +17,18 @@ extension Color {
     
 //    static let bg = Color("bg")
 //    static let skyblue = Color("skyblue")
+    
+    
+    static let background = Color("bg")
+        static let contentBackground = Color("appgray")
+        static let primary = Color("skyblue")
+      //  static let accent = Color("appgreen")
+        
+        // MARK: - Semantic Colors
+        static let textPrimary = Color("ptextcolor")
+        static let textSecondary = Color("stextcolor")
+      //  static let error = Color("error")
+    
     static let appblack = Color("ptextcolor")
     static let appBackground = Color("stextcolor")
     

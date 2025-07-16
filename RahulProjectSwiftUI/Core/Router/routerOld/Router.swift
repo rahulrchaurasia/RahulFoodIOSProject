@@ -9,16 +9,17 @@ import Foundation
 import SwiftUI
 
 
-enum AuthState : String {
+enum AuthState1 : String {
     
     case onboardingModule
     case loginModule
-    case dashboardModule
+    case dashboardModule // main(tab: MainTab)
 }
 
 
 final class Router : ObservableObject {
     
+     let container: DependencyContainer    // expecting DependencyContainer
     @Published var navPath = NavigationPath()
     @Published var stacks :  [ Destination] = []
     
@@ -32,6 +33,10 @@ final class Router : ObservableObject {
 //            get { AuthState(rawValue: storedRoot) ?? .onboardingModule }
 //            set { storedRoot = newValue.rawValue }
 //        }
+    
+    init(container: DependencyContainer) {
+            self.container = container
+    }
     var root: AuthState {
         get {
             
@@ -46,6 +51,7 @@ final class Router : ObservableObject {
         }
         set { storedRoot = newValue.rawValue }
     }
+    
     enum Destination : Hashable, Codable{
         
         case login
@@ -68,6 +74,8 @@ final class Router : ObservableObject {
     
     
     func navigateBack(){
+        
+        guard !navPath.isEmpty else { return }
         navPath.removeLast()
         stacks.removeLast()
     }

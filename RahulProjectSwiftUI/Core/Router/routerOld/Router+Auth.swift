@@ -13,7 +13,7 @@ import SwiftUICore
 
 extension Router {
     
-    @ViewBuilder
+     @ViewBuilder
     func destination(for flow : Destination) -> some View {
         
         switch flow {
@@ -26,7 +26,11 @@ extension Router {
             
         case .share: NavigationStackBasicView()
             
-        case .home: HomeView()
+        case .home:
+            
+            // Create a new container and use it to make the HomeViewModel
+           
+            HomeView(repository: container.makeHomeRepository())
             
         }
             
