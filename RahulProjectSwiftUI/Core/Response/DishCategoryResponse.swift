@@ -16,12 +16,12 @@ struct DishCategoryResponse: Decodable {
 }
 
 struct DishData: Decodable {
-    let categories: [Category]
+    let categories: [Category1]
     let populars: [DishItem]
     let specials: [DishItem]
 }
 
-struct Category: Decodable, Identifiable {
+struct Category1: Decodable, Identifiable {
     let id: String
     let title: String
     let image: String

@@ -8,6 +8,8 @@
 import Foundation
 
 actor HomeRepository : HomeRepositoryProtocol {
+    
+    
    
     //static let shared = HomeRepository()
 
@@ -16,6 +18,52 @@ actor HomeRepository : HomeRepositoryProtocol {
     
     init(apiService: APIServiceProtocol) {
         self.apiService = apiService
+    }
+    
+    
+    func getMealCategory() async throws -> CategoryResponse? {
+        
+        let customBaseURL = APIProvider.mealDBBaseURL + "categories.php"
+        let response : CategoryResponse? = try await
+        
+        apiService.request(
+            endpoint: "",
+            method: .get,
+            urlType: .custom(customBaseURL),
+            headers: nil,
+            body: nil,
+            queryItems: nil
+        )
+        return response
+    }
+    
+    
+   
+    
+    
+    
+    func getMeals( category: String) async throws -> MealResponse {
+        let url = APIProvider.mealDBBaseURL + "filter.php?c=\(category)"
+        return try await apiService.request(
+            endpoint: "",
+            method: .get,
+            urlType: .custom(url),
+            headers: nil,
+            body: nil,
+            queryItems: nil
+        )
+    }
+
+    func getMealDetails(byId id: String) async throws -> MealDetailResponse {
+        let url = APIProvider.mealDBBaseURL + "lookup.php?i=\(id)"
+        return try await apiService.request(
+            endpoint: "",
+            method: .get,
+            urlType: .custom(url),
+            headers: nil,
+            body: nil,
+            queryItems: nil
+        )
     }
   
     func getFoodDetails() async throws -> DishCategoryResponse? {

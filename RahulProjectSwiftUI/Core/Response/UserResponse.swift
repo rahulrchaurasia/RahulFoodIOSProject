@@ -22,18 +22,18 @@ struct UserResponse: Codable {
     }
 }
 
-struct User: Identifiable, Codable {
+struct User: Identifiable, Codable , Equatable {
     let id: Int
     let name: String
     let mobile: String
     let email: String
     let address: Address
     let gender: String
-    let dob: String
-    let occupation: String
-    let company: String
+    let dob: String?
+    let occupation: String?
+    let company: String?
     let maritalStatus: String
-    let createdAt: String
+    let createdAt: String?
     
     enum CodingKeys: String, CodingKey {
         case id, name, mobile, email, address, gender, dob, occupation, company
@@ -42,7 +42,7 @@ struct User: Identifiable, Codable {
     }
 }
 
-struct Address: Codable {
+struct Address: Codable, Equatable {
     let zip: String
     let city: String
     let state: String

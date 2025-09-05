@@ -69,14 +69,14 @@ struct LoginNewView: View {
                 }
             }
             .scrollIndicators(.hidden)
-            .disableWithOpacity(userVM.isLoading)
+            .disableWithOpacity(userVM.loginState == .loading)
             
-            // Loading Indicator
-            if userVM.isLoading {
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: .blue))
-                    .scaleEffect(2)
-            }
+            // PATTERN 1: UI logic
+            //Use a ViewStateOverlay (or inline switch) only for UI.
+            //UI logic → what to show to the user (spinner, error, empty state).
+            
+          
+            ViewStateOverlay(state: userVM.loginState)
         }
         .alert(userVM.alertState.title, isPresented: $userVM.showError, actions: {
             Button("OK", role: .none, action: {})
@@ -103,9 +103,15 @@ struct LoginNewView: View {
             }
         }
         // ↓↓↓ CHANGES HERE - Use isLoginSuccessful instead of loginState ↓↓↓
-        .onChange(of: userVM.isLoginSuccessful) { isSuccessful in
-            if isSuccessful {
-                router.setRoot( .dashboardModule)
+        
+        // PATTERN 2: Side effects
+        //Use .onChange(of:) or .task only for side effects.
+        //  Side effects → what to do when state changes (navigate, trigger API, show toast/alert).
+    
+        
+        .onChange(of: userVM.loginState) { newState in
+            if case .success = newState {
+                router.setRoot(.dashboardModule)
             }
         }
         .onSubmit {
@@ -352,3 +358,23 @@ struct LoginNewView_Previews: PreviewProvider {
 //#Preview {
 //    LoginNewView()
 //}
+
+
+struct ViewStateOverlay<T: Equatable>: View { // The generic <T> is the key
+    let state: ViewState<T>
+    
+    var body: some View {
+        switch state {
+        case .idle:
+            EmptyView()
+        case .loading:
+            ProgressView("Loading...")
+                .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+                .scaleEffect(2)
+        case .success:
+            EmptyView() // navigation handled externally
+        case .error:
+            EmptyView() // could show inline error here, or rely on alert
+        }
+    }
+}

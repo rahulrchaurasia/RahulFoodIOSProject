@@ -18,11 +18,11 @@ enum APIEnvironment {
     var primaryBaseURL: String {
         switch self {
         case .development:
-            return "http://dev.policyboss.com/travel-api/api"
+            return "http://inv.policyboss.com/travel-api/api/"
         case .staging:
             return "http://stage.policyboss.com/travel-api/api"
         case .production:
-            return "http://inv.policyboss.com/travel-api/api"
+            return "http://zextratravelassist.interstellar.co.in/travel-api/api"
         }
     }
     
@@ -80,3 +80,9 @@ enum URLType {
      baseURL: APIEnvironment.production.secondaryBaseURL
  )
  */
+
+
+//Seperate URL for Diff URL
+enum APIProvider {
+    static let mealDBBaseURL = "https://www.themealdb.com/api/json/v1/1/"
+}

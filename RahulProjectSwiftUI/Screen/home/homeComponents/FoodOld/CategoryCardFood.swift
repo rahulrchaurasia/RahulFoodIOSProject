@@ -2,17 +2,17 @@
 //  CategoryCard.swift
 //  RahulProjectSwiftUI
 //
-//  Created by Rahul Chaurasia on 04/09/25.
+//  Created by Rahul Chaurasia on 08/04/25.
 //
 
 import SwiftUI
 
-struct CategoryCard: View {
-    let category: Category
+struct CategoryCardFood: View {
+    let category: Category1
     
     var body: some View {
         VStack {
-            AsyncImage(url: URL(string: category.strCategoryThumb)) { phase in
+            AsyncImage(url: URL(string: category.image)) { phase in
                 switch phase {
                 case .empty:
                     ProgressView()
@@ -29,7 +29,7 @@ struct CategoryCard: View {
             }
             .frame(width: 60, height: 60)
             
-            Text(category.strCategory)
+            Text(category.title)
                 .font(.caption)
                 .multilineTextAlignment(.center)
         }
@@ -42,15 +42,8 @@ struct CategoryCard: View {
 }
 
 
-
 #Preview {
     
-    
-    
-    let category = Category(idCategory: "1",
-                strCategory: "Chicken",
-                strCategoryThumb:"https://www.themealdb.com/images/category/chicken.png",
-                strCategoryDescription: "Chicken is a type of domesticated fowl, a subspecies of the red junglefowl. It is one of the most common and widespread domestic animals, with a total population of more than 19 billion as of 2011.[1] Humans commonly keep chickens as a source of food (consuming both their meat and eggs) and, more rarely, as pets.")
-    CategoryCard(category: category)
+    let category = Category1(id: "1", title: "Data", image: "https://cdn.iconscout.com/icon/free/png-256/pizza-618-1114742.png")
+    CategoryCardFood(category: category)
 }
-

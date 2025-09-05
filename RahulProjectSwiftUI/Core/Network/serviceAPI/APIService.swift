@@ -20,7 +20,7 @@ class APIService: APIServiceProtocol {
     init(sessionConfiguration: URLSessionConfiguration = .default) {
         // Configure session
         let configuration = sessionConfiguration
-        configuration.timeoutIntervalForRequest = 60
+        configuration.timeoutIntervalForRequest = 30
         configuration.waitsForConnectivity = true
         configuration.urlCache = URLCache.shared
         
@@ -30,7 +30,7 @@ class APIService: APIServiceProtocol {
         self.encoder = JSONEncoder()
         
         // Configure decoder (optional date strategy)
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
+       // decoder.keyDecodingStrategy = .convertFromSnakeCase
         decoder.dateDecodingStrategy = .iso8601
     }
     
@@ -56,12 +56,32 @@ class APIService: APIServiceProtocol {
         
         // Add body if needed
         if let body = body {
-            request.httpBody = try encoder.encode(body)
+        
+              request.httpBody = try encoder.encode(AnyEncodable(body))
         }
+        
+        // 🔍 Debug logging
+              #if DEBUG
+              print("➡️ Request: \(request.httpMethod ?? "") \(url.absoluteString)")
+              if let body = request.httpBody,
+                 let str = String(data: body, encoding: .utf8) {
+                  print("📦 Body:", str)
+              }
+              #endif
         
         // Execute request
         do {
             let (data, response) = try await session.data(for: request)
+            
+            // 🔍 Debug response
+                        #if DEBUG
+                        if let httpResponse = response as? HTTPURLResponse {
+                            print("⬅️ Response Code:", httpResponse.statusCode)
+                        }
+                        if let str = String(data: data, encoding: .utf8) {
+                            print("⬅️ Response Body:", str)
+                        }
+                        #endif
             return try handleResponse(data: data, response: response)
         } catch {
             throw mapError(error)
@@ -142,23 +162,25 @@ class APIService: APIServiceProtocol {
     }
     
     private func mapError(_ error: Error) -> NetworkError {
-        if let networkError = error as? NetworkError {
-            return networkError
-        }
-        
-        if let urlError = error as? URLError {
-            switch urlError.code {
-            case .timedOut:
-                return NetworkError.timeout
-            case .cancelled:
-                return NetworkError.cancelled
-            case .notConnectedToInternet:
-                return NetworkError.networkError(urlError)
-            default:
-                return NetworkError.networkError(urlError)
+            if let networkError = error as? NetworkError {
+                return networkError
             }
+            
+            if let urlError = error as? URLError {
+                switch urlError.code {
+                case .timedOut:
+                    return .timeout
+                case .cancelled:
+                    return .cancelled
+                case .notConnectedToInternet:
+                    return .networkUnavailable
+                case .cannotFindHost, .cannotConnectToHost, .dnsLookupFailed:
+                    return .serverUnreachable
+                default:
+                    return .networkError(urlError)
+                }
+            }
+            
+            return .networkError(error)
         }
-        
-        return NetworkError.networkError(error)
-    }
 }

@@ -1,25 +1,23 @@
 //
-//  HomeContentView.swift
+//  homeContentView.swift
 //  RahulProjectSwiftUI
 //
-//  Created by Rahul Chaurasia on 04/09/25.
+//  Created by Rahul Chaurasia on 01/04/25.
 //
 
+//Mark: The allowsHitTesting(false) ensures that users can still scroll through this area
 import SwiftUI
 
-struct HomeContentView: View {
-    
+struct HomeContentViewOld: View {
     @EnvironmentObject var userVM: UserViewModel
     @EnvironmentObject var router: AppStateRouter
     
     // Use ObservedObject since the view model is created at the parent level
     @ObservedObject var homeVM: HomeViewModel
-   
- 
+    
     // Constants for navigation height
     private let bottomNavHeight: CGFloat = 60
     private let bottomPadding: CGFloat = 8
-    
     
     var body: some View {
         // Main container with background color extending to edges
@@ -33,8 +31,8 @@ struct HomeContentView: View {
                 VStack(spacing: 16) {
                     
                     
-                    // Display content based on Meal data state
-                    MealContentView
+                    // Display content based on food data state
+                    foodContentView
                     
                     // Add bottom padding that matches navigation height
                     Spacer().frame(height: bottomNavHeight + bottomPadding + CGFloat.bottomInsets)
@@ -44,7 +42,7 @@ struct HomeContentView: View {
             }
             
             // Loading indicator
-            if case .loading = homeVM.MealState {
+            if case .loading = homeVM.state {
                 ProgressView()
                     .scaleEffect(1.5)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -62,7 +60,7 @@ struct HomeContentView: View {
         .task {
             await homeVM.getMealCategory()
         }
-//
+//       
 //        .alert(homeVM.alertState.title, isPresented: $homeVM.showError, actions: {
 //            Button("OK", role: .none, action: {})
 //        }, message: {
@@ -86,10 +84,10 @@ struct HomeContentView: View {
     
     // MARK: - Food Content View
      @ViewBuilder
-     private var MealContentView: some View {
-         switch homeVM.MealState {
+     private var foodContentView: some View {
+         switch homeVM.state {
          case .idle:
-             Text("Tap to load Meal data")
+             Text("Tap to load food data")
                  .font(.body)
                  .foregroundColor(.secondary)
                  .onAppear {
@@ -102,36 +100,48 @@ struct HomeContentView: View {
              // Loading is handled by the overlay
              EmptyView()
                  
-         case .success(let categories):
+         case .success(let dishData):
              // Display food data
              VStack(alignment: .leading, spacing: 24) {
                  // Popular dishes section
-                 
+                 if !dishData.populars.isEmpty {
+                     Text("Popular Dishes")
+                         .font(.headline)
+                         .padding(.top)
+                     
+                     ScrollView(.horizontal, showsIndicators: false) {
+                         HStack(spacing: 16) {
+                             ForEach(dishData.populars) { dish in
+                                 DishCard(dish: dish)
+                             }
+                         }
+                     }
+                 }
                  
                  
                  // Categories section
-                 if !categories.isEmpty {
+                 if !dishData.categories.isEmpty {
                      Text("Categories")
                          .font(.headline)
                          .padding(.top)
                      
                      LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                         ForEach(categories) { category in
-                             CategoryCard(category: category)
+                         ForEach(dishData.categories) { category in
+                             CategoryCardFood(category: category)
                          }
                      }
                  }
                  
-//                 // Special dishes section
-//                 if !dishData.specials.isEmpty {
-//                     Text("Special Offers")
-//                         .font(.headline)
-//                         .padding(.top)
-//                     
-//                     ForEach(dishData.specials) { dish in
-//                         SpecialDishCard(dish: dish)
-//                     }
-//                 }
+                 // Special dishes section
+                 if !dishData.specials.isEmpty {
+                     Text("Special Offers")
+                         .font(.headline)
+                         .padding(.top)
+                     
+                     ForEach(dishData.specials) { dish in
+                         SpecialDishCard(dish: dish)
+                     }
+                 }
              }
                  
 
@@ -162,16 +172,18 @@ struct HomeContentView: View {
              .padding()
          }
      }
-
+    
 }
 
-#Preview {
-  
-    let container = PreviewDependencies.container
-       let homeVM = container.makeHomeViewModel()
-       
-    HomeContentView(homeVM: homeVM)
-        .environmentObject(Router(container: container))
-           .environmentObject(UserViewModel())
 
-}
+    
+// Preview for HomeContentView
+    #Preview {
+        
+        let container = PreviewDependencies.container
+           let homeVM = container.makeHomeViewModel()
+           
+        HomeContentViewOld(homeVM: homeVM)
+            .environmentObject(Router(container: container))
+               .environmentObject(UserViewModel())
+    }

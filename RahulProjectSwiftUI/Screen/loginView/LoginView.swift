@@ -24,121 +24,118 @@ struct LoginView: View {
         ZStack{
             ScrollView{
                 
-                VStack(spacing: 16){
-                    
-                    //logo
-                    logo
-                    
-                    //title
-                    title
-                    
-                    Spacer().frame(height: 10)
-                    
-                    //textField
-                    
-                    description
-                    
-                    Spacer().frame(height: 10)
-                    
-                  
-                    //forgot Button
-                    
-                    forgotButton
-                    
-                    Spacer().frame(height: 10)
-                    
-                    //Login Button
-                    
-                    
-                    
-                    Button {
-                        
-                        demo()
-                        authenticate()
-                    }
-                    label: {
-                        Text("Login")
-                        
-                    }
-                    .buttonStyle(CapsuleButtonStyle())
-                    
-                    
-                    //bottom View
-                    
-                    HStack(spacing: 16) {
-                        DividerView()
-                        Text("or")
-                        DividerView()
-                    }
-                    .foregroundStyle(.gray)
-                    
-                    Button {
-                        
-                        router.navigate(to: .share)
-                    }
-                    label: {
-                        
-                        Label("Sign up with Apple", systemImage: "apple.logo")
-                        
-                    }
-                  .buttonStyle(CapsuleButtonStyle(bgColor: .black))
-                    
-                    Spacer().frame(height: 10)
-                    
-                    Button {
-                        
-                        let profile = UserProfile(name: "Rahul", age: 32, gender: .male, designation: "Android Developer")
-                        router.navigate(to: .profile(userProfile: profile))
-                    } label: {
-                        
-                        HStack{
-                            Image("check_list")
-                                .resizable()
-                                .frame(width: 15, height: 15)
-                                .scaledToFit()
-                            Text("Sign up with Google")
-                        }
-                    }
-                    .buttonStyle(
-                        CapsuleButtonStyle(
-                            bgColor: .clear,
-                            textColor: .black,
-                            hasBorder: true
-                        )
-                    )
-                    
-                  
-                    //footer View
-                    
-                    footerView
-
-                }
+//                VStack(spacing: 16){
+//                    
+//                    //logo
+//                    logo
+//                    
+//                    //title
+//                    title
+//                    
+//                    Spacer().frame(height: 10)
+//                    
+//                    //textField
+//                    
+//                    description
+//                    
+//                    Spacer().frame(height: 10)
+//                    
+//                  
+//                    //forgot Button
+//                    
+//                    forgotButton
+//                    
+//                    Spacer().frame(height: 10)
+//                    
+//                    //Login Button
+//                    
+//                    
+//                    
+//                    Button {
+//                        
+//                        demo()
+//                        authenticate()
+//                    }
+//                    label: {
+//                        Text("Login")
+//                        
+//                    }
+//                    .buttonStyle(CapsuleButtonStyle())
+//                    
+//                    
+//                    //bottom View
+//                    
+//                    HStack(spacing: 16) {
+//                        DividerView()
+//                        Text("or")
+//                        DividerView()
+//                    }
+//                    .foregroundStyle(.gray)
+//                    
+//                    Button {
+//                        
+//                        router.navigate(to: .share)
+//                    }
+//                    label: {
+//                        
+//                        Label("Sign up with Apple", systemImage: "apple.logo")
+//                        
+//                    }
+//                  .buttonStyle(CapsuleButtonStyle(bgColor: .black))
+//                    
+//                    Spacer().frame(height: 10)
+//                    
+//                    Button {
+//                        
+//                        let profile = UserProfile(name: "Rahul", age: 32, gender: .male, designation: "Android Developer")
+//                        router.navigate(to: .profile(userProfile: profile))
+//                    } label: {
+//                        
+//                        HStack{
+//                            Image("check_list")
+//                                .resizable()
+//                                .frame(width: 15, height: 15)
+//                                .scaledToFit()
+//                            Text("Sign up with Google")
+//                        }
+//                    }
+//                    .buttonStyle(
+//                        CapsuleButtonStyle(
+//                            bgColor: .clear,
+//                            textColor: .black,
+//                            hasBorder: true
+//                        )
+//                    )
+//                    
+//                  
+//                    //footer View
+//                    
+//                    footerView
+//
+//                }
                 
             }
-            .scrollIndicators(.hidden)
-            
-            .disableWithOpacity(authVM.isLoading)
-            
-            if authVM.isLoading {
-
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: .blue))
-                    .scaleEffect(2)
-            }
-            switch authVM.userState {
-            case .idle:
-                EmptyView()
-                
-            case .loading:
-                ProgressView("Loading...")
-                
-            case .success(let users):
-                EmptyView()
-                
-            case .error(let error):
-                Text("Error: \(error.localizedDescription)")
-                    .foregroundColor(.red)
-            }
+//            .scrollIndicators(.hidden)
+//            
+//            .disableWithOpacity(authVM.loginState == .loading )
+//            
+//
+//            switch authVM.userState {
+//            case .idle:
+//                EmptyView()
+//                
+//            case .loading:
+//                ProgressView("Loading...")
+//                    .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+//                    .scaleEffect(2)
+//                
+//            case .success(let users):
+//                EmptyView()
+//                
+//            case .error(let error):
+//                Text("Error: \(error.localizedDescription)")
+//                    .foregroundColor(.red)
+//            }
         }
         
         .alert("Authentication", isPresented: $authVM.showError, actions: {

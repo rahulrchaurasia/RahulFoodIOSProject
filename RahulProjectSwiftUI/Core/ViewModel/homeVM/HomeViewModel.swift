@@ -5,6 +5,38 @@
 //  Created by Rahul Chaurasia on 08/04/25.
 //
 
+/*
+  <<<<<<<<<<<<  APIService Request Flow  >>>>>>>>>>>>>>>>>>
+ 
+         HomeViewModel.getMealCategory()
+                 │
+                 ▼
+         homeRepository.getMealCategory()
+                 │
+                 ▼
+         APIService.request<CategoryResponse>()
+                 │
+                 ▼
+         [1] URLSession.data(for: request)
+                 │
+                 │   → returns (data, response)
+                 ▼
+         [2] handleResponse(data, response)
+                 │
+                 │   • check HTTP status code
+                 │   • if 200...299 → decode JSON
+                 │   • else → throw error
+                 ▼
+         [3] decoder.decode(CategoryResponse.self, from: data)
+                 │
+                 ▼
+         Decoded CategoryResponse
+                 │
+                 ▼
+         Back to HomeViewModel
+ 
+*/
+
 import Foundation
 import SwiftUI
 
@@ -19,6 +51,8 @@ final class HomeViewModel: ObservableObject {
     
     
 // MARK: - Network State
+    
+    @Published private(set)  var MealState: ViewState<[Category]> = .idle
     @Published private(set)  var state: ViewState<DishData> = .idle
     
         
@@ -34,78 +68,118 @@ final class HomeViewModel: ObservableObject {
             self.homeRepository = homeRepository
         }
     
-    func getFoodDetails() async {
-        
+    
+    func getMealCategory() async {
         
         // Skip if already loaded data
-        if hasLoadedInitialData { return }
-     
-        guard !state.isLoading else { return } // Mark :if state is loading true means its repeat call hence return
+       
+        guard !hasLoadedInitialData else { return }
         
-        state = .loading
+        guard !MealState.isLoading else { return } // Mark :if state is loading true means its repeat call hence return
+        
+        MealState = .loading
         
         do {
-            let dishResponse = try await homeRepository.getFoodDetails()
             
-            print("URL: ",dishResponse ?? "" )
-            if let dishResponse = dishResponse ,dishResponse.status == 200 {
+            let response  = try? await homeRepository.getMealCategory()
+            
+            print("URL: ",response ?? "" )
+            
+            if let response = response {
                 
-                
-                
-                state = .success(dishResponse.data)
-                alertState = .success(message: dishResponse.data.populars.first?.name ?? "")
-                hasLoadedInitialData = true  // Set this flag when data loads successfully
-
+                MealState = .success(response.categories)
+                hasLoadedInitialData = true
             }
             else{
-                state = .error(.noData)
-                alertState = .error(message: Constant.noDataMSG)
+                MealState = .error(.noData)
+                //alertState = .error(message: Constant.noDataMSG)
             }
-          
-          
+            
+           
+    
+            
         } catch {
-          
-            handleError(error, for: \.state)
+            
+            handleError(error, for: \.MealState)
             print("ERROR in DishAPi",error.localizedDescription )
         }
+    
     }
     
+    
+    /******************* URL Is not working for Food   **********************************/
+//    func getFoodDetails() async {
+//        
+//        
+//        // Skip if already loaded data
+//        if hasLoadedInitialData { return }
+//     
+//        guard !state.isLoading else { return } // Mark :if state is loading true means its repeat call hence return
+//        
+//        state = .loading
+//        
+//        do {
+//            let dishResponse = try await homeRepository.getFoodDetails()
+//            
+//            print("URL: ",dishResponse ?? "" )
+//            if let dishResponse = dishResponse ,dishResponse.status == 200 {
+//                
+//                
+//                
+//                state = .success(dishResponse.data)
+//                alertState = .success(message: dishResponse.data.populars.first?.name ?? "")
+//                hasLoadedInitialData = true  // Set this flag when data loads successfully
+//
+//            }
+//            else{
+//                state = .error(.noData)
+//                alertState = .error(message: Constant.noDataMSG)
+//            }
+//          
+//          
+//        } catch {
+//          
+//            handleError(error, for: \.state)
+//            print("ERROR in DishAPi",error.localizedDescription )
+//        }
+//    }
+    
     // In HomeViewModel, modify the refreshFoodDetails method:
-    func refreshFoodDetails() async {
-        
-        if hasLoadedInitialData { return }
-        // Prevent multiple simultaneous refreshes
-        guard !state.isLoading else { return }
-        
-        state = .loading
-        
-        do {
-            // Use Task with a try-catch to handle cancellation
-            try await Task {
-                let dishResponse = try await homeRepository.getFoodDetails()
-                
-                if let dishResponse = dishResponse, dishResponse.status == 200 {
-                    state = .success(dishResponse.data)
-                } else {
-                    state = .error(.noData)
-                    alertState = .error(message: Constant.noDataMSG)
-                }
-            }.value
-        } catch {
-            // Handle cancellation separately from other errors
-            if error is CancellationError {
-                // Just reset to previous state if canceled
-                if case .success = state {
-                    // Keep the success state if we already had data
-                } else {
-                    state = .error(.cancelled)
-                }
-            } else {
-                handleError(error, for: \.state)
-                print("ERROR in DishAPi",error.localizedDescription )
-            }
-        }
-    }
+//    func refreshFoodDetails() async {
+//        
+//        if hasLoadedInitialData { return }
+//        // Prevent multiple simultaneous refreshes
+//        guard !state.isLoading else { return }
+//        
+//        state = .loading
+//        
+//        do {
+//            // Use Task with a try-catch to handle cancellation
+//            try await Task {
+//                let dishResponse = try await homeRepository.getFoodDetails()
+//                
+//                if let dishResponse = dishResponse, dishResponse.status == 200 {
+//                    state = .success(dishResponse.data)
+//                } else {
+//                    state = .error(.noData)
+//                    alertState = .error(message: Constant.noDataMSG)
+//                }
+//            }.value
+//        } catch {
+//            // Handle cancellation separately from other errors
+//            if error is CancellationError {
+//                // Just reset to previous state if canceled
+//                if case .success = state {
+//                    // Keep the success state if we already had data
+//                } else {
+//                    state = .error(.cancelled)
+//                }
+//            } else {
+//                handleError(error, for: \.state)
+//                print("ERROR in DishAPi",error.localizedDescription )
+//            }
+//        }
+//    }
     
     // Explicit refresh function that bypasses the loading check
        func refreshFoodDetails2() async {

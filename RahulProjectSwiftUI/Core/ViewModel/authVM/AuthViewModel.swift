@@ -8,6 +8,8 @@
 import Foundation
 import SwiftUI
 
+
+//Not in Used
 @MainActor
 final class AuthViewModel : ObservableObject {
     
@@ -29,13 +31,13 @@ final class AuthViewModel : ObservableObject {
     @Published var passWordData: String = String()
     @Published var address : String = String()
     
-    @Published var showError = false
-    @Published var errorMessage : String?
+    @Published var showError = false        //redundant has to remove
+    @Published var errorMessage : String?   //redundant has to remove
     
-    @Published var showAPIError = false
-    @Published var errorAPIMessage : String?
+    @Published var showAPIError = false      //redundant has to remove
+    @Published var errorAPIMessage : String?    //redundant has to remove
     
-    @Published var isLoading : Bool = false
+   
     // Errors for each text field
     @Published private(set)  var fieldErrors: [LoginField1: String] = [:]
     
@@ -86,34 +88,7 @@ final class AuthViewModel : ObservableObject {
     
     
     
-    // MARK: - Authentication Methods
-    func signIn() async throws -> Bool {
-            isLoading = true
-            defer { isLoading = false }
-            
-            do {
-                // Simulate network call
-                
-                if (validAction1() ) {
-                 
-                    try await Task.sleep(nanoseconds: 1_000_000_000)
-                    
-                    
-                    try await fetchUserByEmail(email)
-                    
-                    return true
-                }
-                
-            } catch {
-                await MainActor.run {
-                    showAPIError = true
-                    errorMessage = "Invalid User ID or password"
-                }
-            }
-        
-           return false
-        }
-        
+      
       
    
     func completeOnboarding() {
@@ -215,44 +190,102 @@ final class AuthViewModel : ObservableObject {
         self.showAPIError = true
     }
     
+    //Mark for Referenc : Normal way handle progressview
+//    func signInDemo() async throws -> Bool {
+//            isLoading = true
+//            defer {
+//                isLoading = false
+//            }
+//            
+//            do {
+//                // Simulate network call
+//                
+//                if (validAction1() ) {
+//                 
+//            
+//                    
+//                    try await fetchUserByEmail(email)
+//                    
+//                    return true
+//                }
+//                
+//            } catch {
+//                await MainActor.run {
+//                    showAPIError = true
+//                    errorMessage = "Invalid User ID or password"
+//                }
+//            }
+//        
+//           return false
+//        }
     
-    // Add a method to fetch users
-        func fetchUserByEmail(_ email: String) async {
-            userState = .loading
-            
+    // MARK: - Dummy Way  Authentication Methods
+    func signIn() async throws -> Bool {
+//            isLoading = true
+//            defer {
+//                isLoading = false
+//            }
             
             do {
-                let users = try await userRepository.getUserByEmail(email)
-                userState = .success(users)
+                // Simulate network call
                 
-                 
-                
-                // Success
-                await MainActor.run {
-        
-                    reset()
-                    storedEmail = email
-                     // set User Loggin
-                    UserDefaultsManager.shared.username = users[0].name
-                    UserDefaultsManager.shared.isLoggedIn = true
+                if (validAction1() ) {
+
+                    
+                    try await fetchUserByEmail(email)
+                    
+                    return true
                 }
+                
             } catch {
-                if let networkError = error as? NetworkError {
-                    userState = .error(networkError)
-                    
+                await MainActor.run {
                     showAPIError = true
-                    errorMessage = "Network error"
-                    
-                } else {
-                    // Convert unknown errors to NetworkError
-                    userState = .error(.networkError(error))
-                    
-                    
-                    showAPIError = true
-                    errorMessage = "Invalid UserId and Password"
+                    errorMessage = "Invalid User ID or password"
                 }
             }
+        
+           return false
         }
+      
+    
+    // Add a method to fetch users
+    
+     func fetchUserByEmail(_ email: String) async {
+        userState = .loading
+        
+        
+        do {
+            let users = try await userRepository.getUserByEmail(email)
+            userState = .success(users)
+            
+                
+            
+            // Success
+            await MainActor.run {
+    
+                reset()
+                storedEmail = email
+                    // set User Loggin
+                UserDefaultsManager.shared.username = users[0].name
+                UserDefaultsManager.shared.isLoggedIn = true
+            }
+        } catch {
+            if let networkError = error as? NetworkError {
+                userState = .error(networkError)
+                
+                showAPIError = true
+                errorMessage = "Network error"
+                
+            } else {
+                // Convert unknown errors to NetworkError
+                userState = .error(.networkError(error))
+                
+                
+                showAPIError = true
+                errorMessage = "Invalid UserId and Password"
+            }
+        }
+    }
     
     
 }

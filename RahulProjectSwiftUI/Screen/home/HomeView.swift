@@ -71,9 +71,9 @@ struct HomeView: View {
             ////added here 007
             .task {
                 // Only load data if not already loaded
-                if !homeVM.hasLoadedInitialData {
-                       await homeVM.getFoodDetails()
-                   }
+//                if !homeVM.hasLoadedInitialData {
+//                       await homeVM.getFoodDetails()
+//                   }
             }
             .alert(homeVM.alertState.title, isPresented: $homeVM.showError, actions: {
                 Button("OK", role: .none, action: {})
