@@ -44,7 +44,7 @@ struct HomeContentView: View {
             }
             
             // Loading indicator
-            if case .loading = homeVM.MealState {
+            if case .loading = homeVM.CategoryState {
                 ProgressView()
                     .scaleEffect(1.5)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -87,7 +87,7 @@ struct HomeContentView: View {
     // MARK: - Food Content View
      @ViewBuilder
      private var MealContentView: some View {
-         switch homeVM.MealState {
+         switch homeVM.CategoryState {
          case .idle:
              Text("Tap to load Meal data")
                  .font(.body)

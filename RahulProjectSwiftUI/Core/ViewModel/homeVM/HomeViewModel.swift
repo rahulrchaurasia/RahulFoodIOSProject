@@ -49,10 +49,16 @@ final class HomeViewModel: ObservableObject {
     
     @Published var hasLoadedInitialData = false
     
+
+    
     
 // MARK: - Network State
     
-    @Published private(set)  var MealState: ViewState<[Category]> = .idle
+    @Published private(set)  var CategoryState: ViewState<[Category]> = .idle
+    @Published private(set) var mealsState: ViewState<[Meal]> = .idle
+    @Published private(set) var mealDetailState: ViewState<MealDetail> = .idle
+    
+    
     @Published private(set)  var state: ViewState<DishData> = .idle
     
         
@@ -75,9 +81,9 @@ final class HomeViewModel: ObservableObject {
        
         guard !hasLoadedInitialData else { return }
         
-        guard !MealState.isLoading else { return } // Mark :if state is loading true means its repeat call hence return
+        guard !CategoryState.isLoading else { return } // Mark :if state is loading true means its repeat call hence return
         
-        MealState = .loading
+        CategoryState = .loading
         
         do {
             
@@ -87,11 +93,11 @@ final class HomeViewModel: ObservableObject {
             
             if let response = response {
                 
-                MealState = .success(response.categories)
+                CategoryState = .success(response.categories)
                 hasLoadedInitialData = true
             }
             else{
-                MealState = .error(.noData)
+                CategoryState = .error(.noData)
                 //alertState = .error(message: Constant.noDataMSG)
             }
             
@@ -100,11 +106,37 @@ final class HomeViewModel: ObservableObject {
             
         } catch {
             
-            handleError(error, for: \.MealState)
+            handleError(error, for: \.CategoryState)
             print("ERROR in DishAPi",error.localizedDescription )
         }
     
     }
+    
+    
+    func getMeals(byCategory category: String) async {
+            mealsState = .loading
+            do {
+                let response = try await homeRepository.getMeals(category: category)
+                mealsState = .success(response.meals)
+            } catch {
+                handleError(error, for: \.mealsState)
+            }
+        }
+    
+    
+    func getMealDetail(byId id: String) async {
+            mealDetailState = .loading
+            do {
+                let response = try await homeRepository.getMealDetails(byId: id)
+                if let meal = response.meals.first {
+                    mealDetailState = .success(meal)
+                } else {
+                    mealDetailState = .error(.noData)
+                }
+            } catch {
+                handleError(error, for: \.mealDetailState)
+            }
+        }
     
     
     /******************* URL Is not working for Food   **********************************/

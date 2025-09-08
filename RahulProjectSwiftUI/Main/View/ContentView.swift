@@ -40,10 +40,20 @@ struct ContentView: View {
 
 #Preview {
     
+//    let mockContainer = MockDependencyContainer()
+//    
+//    let container = DependencyContainer()
+//    ContentView(container: container)
+//        .environmentObject(AuthViewModel(userRepository: DependencyContainer().userRepository))
+//           .environmentObject(UserViewModel())
+//           .environmentObject(Router(container: container))
+//           .environmentObject(AppStateRouter(container: mockContainer))
     
-    let container = DependencyContainer()
-    ContentView(container: container)
-        .environmentObject(AuthViewModel(userRepository: DependencyContainer().userRepository))
-           .environmentObject(UserViewModel())
-           .environmentObject(Router(container: container))
+    
+    let mockContainer = MockDependencyContainer()
+
+        ContentView(container: mockContainer)
+            .environmentObject(mockContainer.makeAuthViewModel())
+            .environmentObject(UserViewModel())
+            .environmentObject(AppStateRouter(container: mockContainer))
 }

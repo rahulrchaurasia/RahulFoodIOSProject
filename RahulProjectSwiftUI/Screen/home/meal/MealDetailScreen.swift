@@ -8,11 +8,55 @@
 import SwiftUI
 
 struct MealDetailScreen: View {
+    @ObservedObject var homeVM: HomeViewModel
+    let mealId: String
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        
+        Group {
+            switch homeVM.mealDetailState {
+            case .idle, .loading:
+                ProgressView("Loading meal...")
+            case .success(let meal):
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 16) {
+                        AsyncImage(url: URL(string: meal.strMealThumb)) { image in
+                            image.resizable().scaledToFit()
+                        } placeholder: {
+                            ProgressView()
+                        }
+                        Text(meal.strMeal).font(.largeTitle).bold()
+                        Text(meal.strInstructions)
+                    }
+                    .padding()
+                }
+            case .error(let error):
+                VStack {
+                    Text("❌ Failed to load meal")
+                        .foregroundColor(.red)
+                    Text(error.localizedDescription)
+                    Button("Retry") {
+                        Task { await homeVM.getMealDetail(byId: mealId) }
+                    }
+                }
+            }
+        }
+     
+        .task {
+                    await homeVM.getMealDetail(byId: mealId)
+                }
     }
+    
 }
 
 #Preview {
-    MealDetailScreen()
+   
+    let mockContainer = MockDependencyContainer()
+        let homeVM = mockContainer.makeHomeViewModel()
+        
+
+         MealDetailScreen(
+            homeVM: homeVM,
+            mealId: "52772"
+        )
 }

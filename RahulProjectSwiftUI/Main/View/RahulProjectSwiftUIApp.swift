@@ -20,6 +20,7 @@ struct RahulProjectSwiftUIApp: App {
 
     @StateObject private var router: AppStateRouter
     
+    
     // 3. Initialize everything in init()
     init()
     {
@@ -38,6 +39,8 @@ struct RahulProjectSwiftUIApp: App {
                        .environmentObject(container.makeAuthViewModel())
                        .environmentObject(userVM)
                        .environmentObject(router)
+            
+            
         }
     }
 }
