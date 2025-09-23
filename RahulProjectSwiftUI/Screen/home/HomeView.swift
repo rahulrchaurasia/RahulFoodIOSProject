@@ -21,34 +21,52 @@ import SwiftUI
 
  Containers provide correctly typed instances
 
-
+Note : Using init we expect  init(repository: HomeRepositoryProtocol)
+ HomeRepositoryProtocol hence we have to pass when we called it
+ via   HomeView(repository: container.makeHomeRepository()
  */
 struct HomeView: View {
     
     @EnvironmentObject var userVM: UserViewModel
-   
-    @EnvironmentObject var router: AppStateRouter
+    @EnvironmentObject var homeVM: HomeViewModel  // just read it
+
+   // @EnvironmentObject var router: AppStateRouter
     
    
    // The ViewModel is now injected instead of created here
     
-        @StateObject var homeVM: HomeViewModel // Owned here
+      //  @StateObject var homeVM: HomeViewModel // Owned here
     
     @State private var selectedTab: BottomNavigationView.TabItem = .home
     @State private var showMenu = false
     
-    init(repository: HomeRepositoryProtocol) {
-           _homeVM = StateObject(wrappedValue:
-               HomeViewModel(homeRepository: repository) // ← Use injected parameter
-           )
-       }
+
+    
+    // ✅ Init with ViewModel
+    //Mark :
+  /* 1>This initializer receives a HomeViewModel instance from whoever constructs HomeView. in our case AppDestination..
+    It then wraps that external instance inside the @StateObject, meaning:
+
+    “Here, SwiftUI, please manage the lifecycle of this particular HomeViewModel instance.”
+
+    So HomeView does not create its own HomeViewModel
+    
+    2>We than pass HomeViewModel instance via @EnvironmentObject to all its child
+    
+   */
+    
+//    init(homeVM: HomeViewModel) {
+//           _homeVM = StateObject(wrappedValue: homeVM)
+//       }
     
     var body: some View {
         ZStack {
             // Main content including bottom navigation
             ZStack(alignment: .bottom) {
                 // TabView with content
-                TabContentView(homeVM: homeVM, selectedTab: selectedTab)
+//                TabContentView(homeVM: homeVM, selectedTab: selectedTab)
+                TabContentView( selectedTab: selectedTab)
+                   
                     .offset(x: showMenu && selectedTab == .home ? UIScreen.main.bounds.width * 0.75 : 0)
                     .scaleEffect(showMenu && selectedTab == .home ? 0.9 : 1)
                 
@@ -170,8 +188,10 @@ struct HomeView: View {
 #Preview {
     let container = PreviewDependencies.container
     
-     HomeView(repository: container.makeHomeRepository())
+    HomeView()
         .environmentObject(UserViewModel())
-        .environmentObject(Router(container: container))
+        .environmentObject(container.makeHomeViewModel())
+       
+       // .environmentObject(Router(container: container))
 }
 

@@ -20,6 +20,7 @@ final class UserDefaultsManager {
         static let isDarkMode = "isDarkMode"
         static let userSettings = "userSettings"
         static let isLoggedIn = "isLoggedIn"
+        static let hasSeenOnboarding = "hasCompletedOnboarding"
         
         // Add this to get all keys
         static var allKeys: [String] {
@@ -82,6 +83,11 @@ final class UserDefaultsManager {
         get { defaults.bool(forKey: Keys.isLoggedIn) }
         set { defaults.set(newValue, forKey: Keys.isLoggedIn) }
     }
+    
+    var hasSeenOnboarding: Bool {
+            get { defaults.bool(forKey: Keys.hasSeenOnboarding) }
+            set { defaults.set(newValue, forKey: Keys.hasSeenOnboarding) }
+        }
     
     // For complex objects using Codable
     func saveUserSettings(_ settings: UserSettings) {

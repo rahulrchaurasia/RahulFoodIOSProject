@@ -15,11 +15,30 @@ import SwiftUI
  or
  user global way  userVM: UserViewModel
  */
+
+//***********************************************************************
+/*
+Where AppState belongs
+
+AppState = global session status (isLoggedIn, hasCompletedOnboarding).
+
+UserViewModel = UI + form state for login screen (fields, validation, login API calls).
+
+👉 So, AppState should not live inside UserViewModel, because:
+
+AppState is global — onboarding, login, home modules all depend on it.
+
+UserViewModel is local — only for login screen.
+
+If you mix them, you create tight coupling → every module would need UserViewModel just to check login state, which is wrong.
+ */
+
+//***********************************************************************
 struct LoginNewView: View {
     @EnvironmentObject var userVM: UserViewModel
-    @EnvironmentObject var router: AppStateRouter
-    
-    @EnvironmentObject var loginRouter: LoginFlowRouter // 👈 new mini router only for login
+
+    @EnvironmentObject var appState: AppState
+    @EnvironmentObject var coordinator: AppCoordinator
     
     @FocusState private var focusField: LoginField?
     
@@ -91,6 +110,7 @@ struct LoginNewView: View {
         .toolbar {
             keyboardToolbar
         }
+       
         .onChange(of: userVM.focusedField) { newField in
            // handleFocusChange(newField)
             if newField != focusField {
@@ -102,17 +122,39 @@ struct LoginNewView: View {
                 userVM.focusedField = newField
             }
         }
-        // ↓↓↓ CHANGES HERE - Use isLoginSuccessful instead of loginState ↓↓↓
         
         // PATTERN 2: Side effects
         //Use .onChange(of:) or .task only for side effects.
         //  Side effects → what to do when state changes (navigate, trigger API, show toast/alert).
-    
+    //  // Side-effect: react when loginState changes
         
         .onChange(of: userVM.loginState) { newState in
             if case .success = newState {
-                router.setRoot(.dashboardModule)
+               // router.setRoot(.dashboardModule)
+                
+                appState.login()
+               //  coordinator.completeLogin()
             }
+           
+//            switch newState {
+//            case .success(let user):
+//                // 1) Update the global session (single source of truth)
+//                guard !appState.isLoggedIn else { return } // idempotency guard
+//                appState.login() // persists isLoggedIn
+//                
+//                // 2) Let coordinator observe AppState and switch flow automatically,
+//                //    OR call coordinator directly if you prefer immediate explicit navigation:
+//                // coordinator.completeLogin()
+//                //
+//                // Prefer to let coordinator observe appState for separation of concerns.
+//            case .error(let err):
+//                // logging/analytics can go here
+//                print("Login failed: \(err.localizedDescription)")
+//            case .loading, .idle:
+//                print("Loading")
+//                
+//            }
+                  
         }
         .onSubmit {
             handleSubmitAction()
@@ -188,7 +230,9 @@ struct LoginNewView: View {
             
             Button {
                // router.navigate(to: .forgotPassword)
-                loginRouter.navigate(to: .forgotPassword)
+               // loginRouter.navigate(to: .forgotPassword)
+                
+                coordinator.navigate(to: .login(.forgotPassword))
             } label: {
                 Text("Forgot Password")
                     .foregroundStyle(.gray)
@@ -210,7 +254,8 @@ struct LoginNewView: View {
     private var socialLoginOptions: some View {
         VStack(spacing: 10) {
             Button {
-                loginRouter.navigate(to: .share)
+                //loginRouter.navigate(to: .share)
+                coordinator.navigate(to: .login(.signUp))
             } label: {
                 Label("Sign up with Apple", systemImage: "apple.logo")
             }
@@ -220,7 +265,7 @@ struct LoginNewView: View {
             
             Button {
                 let profile = UserProfile(name: "Rahul", age: 32, gender: .male, designation: "Android Developer")
-                router.navigate(to: .profile(userProfile: profile))
+               // router.navigate(to: .profile(userProfile: profile))
                 
             } label: {
                 HStack {
@@ -243,7 +288,7 @@ struct LoginNewView: View {
     
     private var footerView: some View {
         Button {
-            loginRouter.navigate(to: .createAccount(name: "Data From Login"))
+           // loginRouter.navigate(to: .createAccount(name: "Data From Login"))
         } label: {
             HStack {
                 Text("Don't have an account")
@@ -306,7 +351,13 @@ struct LoginNewView: View {
     private func handleLoginStateChange(_ newState: ViewState<User>) {
         if case .success = newState {
             // Navigate to dashboard on successful login
-            router.setRoot(.dashboardModule)
+          //  router.setRoot(.dashboardModule)
+            
+            // 1. Update appState if you want persistence
+                        //  appState.isLoggedIn = true
+
+                          // 2. Tell coordinator to switch flow
+                         // coordinator.completeLogin()
         }
     }
     
@@ -352,29 +403,10 @@ struct LoginNewView_Previews: PreviewProvider {
         let container = PreviewDependencies.container
         LoginNewView()
             .environmentObject(UserViewModel())
-            .environmentObject(Router(container: container))
+         
     }
 }
 //#Preview {
 //    LoginNewView()
 //}
 
-
-struct ViewStateOverlay<T: Equatable>: View { // The generic <T> is the key
-    let state: ViewState<T>
-    
-    var body: some View {
-        switch state {
-        case .idle:
-            EmptyView()
-        case .loading:
-            ProgressView("Loading...")
-                .progressViewStyle(CircularProgressViewStyle(tint: .blue))
-                .scaleEffect(2)
-        case .success:
-            EmptyView() // navigation handled externally
-        case .error:
-            EmptyView() // could show inline error here, or rely on alert
-        }
-    }
-}

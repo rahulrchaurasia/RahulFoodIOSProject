@@ -94,7 +94,7 @@ final class HomeViewModel: ObservableObject {
             if let response = response {
                 
                 CategoryState = .success(response.categories)
-                hasLoadedInitialData = true
+                hasLoadedInitialData = true // ✅ Mark as loaded
             }
             else{
                 CategoryState = .error(.noData)
@@ -113,7 +113,11 @@ final class HomeViewModel: ObservableObject {
     }
     
     
-    func getMeals(byCategory category: String) async {
+    func getMealList(byCategory category: String) async {
+        
+        // ✅ Prevents a new API call if one is already running.
+           guard !mealsState.isLoading else { return }
+        
             mealsState = .loading
             do {
                 let response = try await homeRepository.getMeals(category: category)
@@ -121,6 +125,10 @@ final class HomeViewModel: ObservableObject {
             } catch {
                 handleError(error, for: \.mealsState)
             }
+        }
+    
+    func clearMealList() {
+            mealsState = .idle
         }
     
     

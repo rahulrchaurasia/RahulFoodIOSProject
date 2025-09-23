@@ -10,7 +10,7 @@ import SwiftUI
 
 struct HomeContentViewOld: View {
     @EnvironmentObject var userVM: UserViewModel
-    @EnvironmentObject var router: AppStateRouter
+   // @EnvironmentObject var router: AppStateRouter
     
     // Use ObservedObject since the view model is created at the parent level
     @ObservedObject var homeVM: HomeViewModel
@@ -184,6 +184,6 @@ struct HomeContentViewOld: View {
            let homeVM = container.makeHomeViewModel()
            
         HomeContentViewOld(homeVM: homeVM)
-            .environmentObject(Router(container: container))
+           // .environmentObject(Router(container: container))
                .environmentObject(UserViewModel())
     }

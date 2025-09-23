@@ -59,8 +59,9 @@ struct SlideMenuContentView: View {
     @State var selectedItem: MenuItem? = nil
     @State private var menuItems: [MenuItem] = MenuDataProvider.getMenuItems()
     
-    @EnvironmentObject var router: AppStateRouter
+   // @EnvironmentObject var router: AppStateRouter
     @EnvironmentObject var userVM: UserViewModel
+    @EnvironmentObject private var appState: AppState
     
     // User profile data
     let userName = UserDefaultsManager.shared.loggedInUserName
@@ -200,9 +201,9 @@ struct SlideMenuContentView: View {
         // Assuming you have access to the router
         
         switch menuItem.title {
-        case "Home":
+        case "Home": break
             // Navigate to home
-            router.setRoot(.dashboardModule)
+           // router.setRoot(.dashboardModule)
             
         case "Profile":
             // Navigate to profile
@@ -210,10 +211,10 @@ struct SlideMenuContentView: View {
                 name: UserDefaultsManager.shared.loggedInUserName,
                                       age: 32,
                                       gender: .male)
-            router.navigate(to: .profile(userProfile: profile))
+          //  router.navigate(to: .profile(userProfile: profile))
             
-        case "Forgot Password":
-            router.navigate(to: .forgotPassword)
+        case "Forgot Password": break
+           // router.navigate(to: .forgotPassword)
             
         case "Veg Food", "Non Veg Food": break
             // Navigate to food category view
@@ -230,11 +231,13 @@ struct SlideMenuContentView: View {
             
         case "Logout":
             // Handle logout
-            userVM.logout()
+          
            // UserDefaultsManager.shared.logoutUser()
-            router.setRoot( .loginModule)
+           // router.setRoot( .loginModule)
             
-            
+            // Single source of truth: call AppState
+                       appState.logout()
+
             
             
             

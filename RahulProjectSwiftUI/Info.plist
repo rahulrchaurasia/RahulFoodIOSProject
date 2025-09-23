@@ -2,37 +2,31 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-	<key>UILaunchScreen</key>
-	<dict>
-		<key>UIColorName</key>
-		<string>orange</string>
-		<key>UIImageName</key>
-		<string>bakery_snacks</string>
-		<key>UILaunchScreen</key>
-		<dict/>
-	</dict>
-	<key>FirebaseAppDelegateProxyEnabled</key>
-	<false/>
 	<key>UIAppFonts</key>
-    <array>
-        <string>inter_bold.ttf</string>
-        <string>inter_semibold.ttf</string>
-        <string>inter_regular.ttf</string>
-        <string>bungee.ttf</string>
-        <string>Gilroy-Medium.ttf</string>
-        <string>Gilroy-Regular.ttf</string>
-        <string>Gilroy-Bold.ttf</string>
-        <string>Gilroy-SemiBold.ttf</string>
-        <string>NunitoSans-SemiBold.ttf</string>
-        <string>NunitoSans-Bold.ttf</string>
-        <string>NunitoSans-ExtraBold.ttf</string>
-        <string>NunitoSans-Medium.ttf</string>
-        <string>NunitoSans-Regular.ttf</string>
-    </array>
+	<array>
+		<string>inter_bold.ttf</string>
+		<string>inter_semibold.ttf</string>
+		<string>inter_regular.ttf</string>
+		<string>bungee.ttf</string>
+		<string>Gilroy-Medium.ttf</string>
+		<string>Gilroy-Regular.ttf</string>
+		<string>Gilroy-Bold.ttf</string>
+		<string>Gilroy-SemiBold.ttf</string>
+		<string>NunitoSans-SemiBold.ttf</string>
+		<string>NunitoSans-Bold.ttf</string>
+		<string>NunitoSans-ExtraBold.ttf</string>
+		<string>NunitoSans-Medium.ttf</string>
+		<string>NunitoSans-Regular.ttf</string>
+	</array>
+    
+    <key>UILaunchStoryboardName</key>
+    <string>LaunchScreen</string>
 </dict>
 </plist>

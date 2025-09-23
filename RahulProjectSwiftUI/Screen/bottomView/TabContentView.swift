@@ -10,16 +10,18 @@ import SwiftUI
 struct TabContentView: View {
     
     @EnvironmentObject var userVM: UserViewModel
-    @EnvironmentObject var router: AppStateRouter
+    //@EnvironmentObject var router: AppStateRouter
     
-    @ObservedObject var homeVM: HomeViewModel
+   // @ObservedObject var homeVM: HomeViewModel
+    @EnvironmentObject var homeVM: HomeViewModel   // ✅ Now from env
     
     let selectedTab: BottomNavigationView.TabItem
     var body: some View {
         Group {
             switch selectedTab {
             case .home:
-                HomeContentView( homeVM: homeVM)
+               // HomeContentView( homeVM: homeVM)
+                HomeContentView()   // ✅ No need to pass homeVM
             case .transaction:
                 TransactionContentView()
             case .carJourney:
@@ -38,5 +40,7 @@ struct TabContentView: View {
    
     let homeVM = HomeViewModel(homeRepository: homeRepository)
     let selectedTab = BottomNavigationView().selectedTab
-    TabContentView(homeVM: homeVM, selectedTab: selectedTab)
+    TabContentView( selectedTab: selectedTab)
+        .environmentObject(homeVM)
+       
 }

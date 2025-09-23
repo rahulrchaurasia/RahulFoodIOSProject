@@ -15,24 +15,33 @@ struct MealCard: View {
         
         VStack {
             AsyncImage(url: URL(string: meal.strMealThumb)) { image in
-                image.resizable().scaledToFill()
+                image.resizable()
+                // This makes the image a square that fills its container
+                    .aspectRatio(1, contentMode: .fill)
             } placeholder: {
-                ProgressView()
+                // Give the placeholder a frame so the card doesn't resize while loading
+                Color.gray.opacity(0.1)
+                    .aspectRatio(1, contentMode: .fit)
             }
-            .frame(width: 150, height: 150)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            // Let's clip the image to the top corners of the card
+            .clipped()
+            // TEXT
+            VStack {
+                Text(meal.strMeal)
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                    .lineLimit(2)
+                // Ensure text takes up full width for centering
+                    .frame(maxWidth: .infinity, alignment: .center)
+            }
+            .padding(8) // Add some padding around the text
+            .frame(height: 70) // Give the text area a consistent height
             
-            Text(meal.strMeal)
-                .font(.headline)
-                .multilineTextAlignment(.center)
-                .lineLimit(2)
-                .padding(.top, 4)
         }
-        .frame(maxWidth: .infinity)
-        .padding()
-        .background(Color.systemBackground)
-        .cornerRadius(12)
-        .shadow(radius: 2)
+        // This is the main card styling
+        .background(.background) // Use the adaptive background color
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
         
         
     }

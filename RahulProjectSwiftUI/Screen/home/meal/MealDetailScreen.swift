@@ -7,8 +7,11 @@
 
 import SwiftUI
 
+//Mark : After CategoryList when we Select particular Item then this details will Open
 struct MealDetailScreen: View {
-    @ObservedObject var homeVM: HomeViewModel
+    
+  
+    @EnvironmentObject var homeVM: HomeViewModel
     let mealId: String
 
     var body: some View {
@@ -43,7 +46,7 @@ struct MealDetailScreen: View {
         }
      
         .task {
-                    await homeVM.getMealDetail(byId: mealId)
+                await homeVM.getMealDetail(byId: mealId)
                 }
     }
     
@@ -56,7 +59,7 @@ struct MealDetailScreen: View {
         
 
          MealDetailScreen(
-            homeVM: homeVM,
+           
             mealId: "52772"
         )
 }

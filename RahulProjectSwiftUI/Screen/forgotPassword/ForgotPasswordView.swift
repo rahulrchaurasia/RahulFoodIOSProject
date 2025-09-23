@@ -15,8 +15,8 @@ struct ForgotPasswordView: View {
     @State private var email: String = ""
    // @State private var isEmailSent: Bool = false
     
-    @EnvironmentObject var router : AppStateRouter
-    @EnvironmentObject var loginRouter: LoginFlowRouter // 👈 new mini router only
+//    @EnvironmentObject var router : AppStateRouter
+//    @EnvironmentObject var loginRouter: LoginFlowRouter // 👈 new mini router only
     var body: some View {
         VStack(alignment:.leading, spacing:10) {
             Group {
@@ -37,7 +37,7 @@ struct ForgotPasswordView: View {
             Button {
                // isEmailSent = true // Mark set for navigationDestination
                 
-                loginRouter.navigate(to: .emailSent)
+              //  loginRouter.navigate(to: .emailSent)
             } label: {
                
                 Text("Send Instruction")

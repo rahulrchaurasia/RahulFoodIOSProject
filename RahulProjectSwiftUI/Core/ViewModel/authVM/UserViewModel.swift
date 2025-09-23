@@ -170,17 +170,17 @@ final class UserViewModel: ObservableObject {
         isLoggedIn = true
         UserDefaultsManager.shared.isLoggedIn = true
     }
+//    
+//    func logout() {
+//        UserDefaultsManager.shared.logoutUser()
+//        clearForm()
+//        isLoggedIn = false
+//        storedEmail = ""
+//        loginState = .idle // Reset the state on logout
+//        
+//    }
     
-    func logout() {
-        UserDefaultsManager.shared.logoutUser()
-        clearForm()
-        isLoggedIn = false
-        storedEmail = ""
-        loginState = .idle // Reset the state on logout
-        
-    }
-    
-    private func clearForm() {
+    func clearForm() {
         email = ""
         password = ""
         address = ""

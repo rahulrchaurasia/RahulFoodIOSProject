@@ -9,20 +9,37 @@ import SwiftUI
 
 struct createAccountView: View {
     
+    @EnvironmentObject var appState: AppState
+    @EnvironmentObject var coordinator: AppCoordinator
+
+    
     @State var email: String = ""
     @State var fullName: String = ""
     @State var password: String = ""
     @State var confirmPassword: String = ""
     
     @EnvironmentObject var authVM : AuthViewModel
-    @EnvironmentObject var router : AppStateRouter
+  //  @EnvironmentObject var router : AppStateRouter
     
     var name : String = ""
   //  @Environment(\.presentationMode) var presentationMode
     var body: some View {
         
         VStack {
-            Text("Create Account \(name)")
+            
+        
+            Button {
+                
+                coordinator.navigateBack()
+            } label: {
+                Image(systemName:"xmark")
+                    .resizable()
+                    .frame(width: 24, height: 24).foregroundColor(.gray)
+            }
+            .frame(maxWidth: .infinity,alignment: .trailing)
+            .padding(.trailing,8)
+            
+               Text("Create Account \(name)")
                 .font(.title2)
                 .fontWeight(.semibold)
             

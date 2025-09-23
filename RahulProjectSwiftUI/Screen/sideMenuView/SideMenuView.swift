@@ -17,7 +17,7 @@ struct SideMenuView: View {
         .frame(width: UIScreen.main.bounds.width * 0.75)
         .background(
             LinearGradient(
-                gradient: Gradient(colors: [Color.blue, Color.blue.opacity(0.8)]),
+                gradient: Gradient(colors: [Color.blueMenu, Color.blue]),
                 startPoint: .top,
                 endPoint: .bottom
             )

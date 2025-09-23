@@ -16,7 +16,7 @@ Spacer().frame(height: bottomNavHeight + bottomPadding + CGFloat.bottomInsets)
  */
 struct HomeContentView1: View {
     @EnvironmentObject var userVM: UserViewModel
-    @EnvironmentObject var router: AppStateRouter
+   // @EnvironmentObject var router: AppStateRouter
     
     // Constants for navigation height
     private let bottomNavHeight: CGFloat = 60
@@ -42,9 +42,9 @@ struct HomeContentView1: View {
                         .fontWeight(.heavy)
 
                     Button {
-                        userVM.logout()
+                      //  userVM.logout()
                        
-                        router.setRoot(.loginModule)
+                       // router.setRoot(.loginModule)
                     } label: {
                         AppButton(title: "Log-Out")
                     }

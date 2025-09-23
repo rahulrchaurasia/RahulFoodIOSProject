@@ -22,7 +22,7 @@ final class AuthViewModel : ObservableObject {
     
     private let userRepository: UserRepositoryProtocol
     
-    @Published var currentAuthState: AuthState = .onboardingModule
+   // @Published var currentAuthState: AuthState = .onboardingModule
     
     @Published var isLoggedIn : Bool = false
    // @Published var isError : Bool = false

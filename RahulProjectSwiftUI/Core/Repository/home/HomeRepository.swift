@@ -53,7 +53,7 @@ actor HomeRepository : HomeRepositoryProtocol {
             queryItems: nil
         )
     }
-
+    
     func getMealDetails(byId id: String) async throws -> MealDetailResponse {
         let url = APIProvider.mealDBBaseURL + "lookup.php?i=\(id)"
         return try await apiService.request(
@@ -65,7 +65,8 @@ actor HomeRepository : HomeRepositoryProtocol {
             queryItems: nil
         )
     }
-  
+
+    
     func getFoodDetails() async throws -> DishCategoryResponse? {
       
        // let headers = ["token": Configuration.token]

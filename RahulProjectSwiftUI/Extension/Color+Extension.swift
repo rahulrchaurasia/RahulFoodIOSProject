@@ -22,6 +22,7 @@ extension Color {
     static let background = Color("bg")
         static let contentBackground = Color("appgray")
         static let primary = Color("skyblue")
+        static let blueMenu = Color("bluemenu")
       //  static let accent = Color("appgreen")
         
         // MARK: - Semantic Colors

@@ -10,7 +10,7 @@ import SwiftUI
 struct EmailSentView: View {
     
     @State var email: String = ""
-    @EnvironmentObject var router : AppStateRouter
+  //  @EnvironmentObject var router : AppStateRouter
     var body: some View {
         
         VStack(spacing: 24) {
@@ -35,7 +35,7 @@ struct EmailSentView: View {
                 
                 Button {
                     
-                    router.navigateToRoot()
+                 //   router.navigateToRoot()
                     
                 } label: {
                     
@@ -54,7 +54,7 @@ struct EmailSentView: View {
             
             Button {
                 
-                router.navigateBack()
+               // router.navigateBack()
                 
             } label: {
                 

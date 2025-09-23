@@ -11,7 +11,7 @@ struct ProfileView: View {
     
     @EnvironmentObject var authVM : AuthViewModel  // Common ViewModel
     
-    @EnvironmentObject var router : AppStateRouter
+    //@EnvironmentObject var router : AppStateRouter
     
     @StateObject private var viewModel = ProfileImageVM()
     
@@ -28,7 +28,7 @@ struct ProfileView: View {
             // Add custom header at the top
             CustomNavigationBar(title: "Profile", showBackButton: true) {
                 
-                router.navigateBack()
+              //  router.navigateBack()
             }
             VStack {
                 ZStack {

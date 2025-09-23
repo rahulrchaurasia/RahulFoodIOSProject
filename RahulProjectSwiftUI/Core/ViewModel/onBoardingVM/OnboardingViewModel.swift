@@ -13,8 +13,9 @@ class OnboardingViewModel : ObservableObject {
     
     @Published var currentPage = 0
     
-    //Mark: This sets the default value to false if there’s no existing value in UserDefaults for that key.
-    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
+    
+    // REMOVE THIS. The View will handle the global state change.
+  //  @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
         
     
     // MARK: - Properties
@@ -48,20 +49,24 @@ class OnboardingViewModel : ObservableObject {
     
     
     // MARK: - Methods
-        func nextPage() {
-            if isLastPage {
-                completeOnboarding()
-            } else {
-                currentPage += 1
-            }
+    func nextPage() {
+        //            if isLastPage {
+        //                completeOnboarding()
+        //            } else {
+        //                currentPage += 1
+        //            }
+        // This logic is purely for the UI, so it stays.
+        if !isLastPage {
+            currentPage += 1
         }
+    }
     
-       func skipOnboarding() {
-            completeOnboarding()
-        }
-        
-        func completeOnboarding() {
-            hasSeenOnboarding = true
-        }
+//       func skipOnboarding() {
+//            completeOnboarding()
+//        }
+//        
+//        func completeOnboarding() {
+//            hasSeenOnboarding = true
+//        }
 
 }

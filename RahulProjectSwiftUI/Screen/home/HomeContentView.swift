@@ -10,10 +10,17 @@ import SwiftUI
 struct HomeContentView: View {
     
     @EnvironmentObject var userVM: UserViewModel
-    @EnvironmentObject var router: AppStateRouter
+    
+    // ✅ Add reference to coordinator
+       @EnvironmentObject private var coordinator: AppCoordinator
+
+    
+  //  @EnvironmentObject var router: AppStateRouter
     
     // Use ObservedObject since the view model is created at the parent level
-    @ObservedObject var homeVM: HomeViewModel
+   // @ObservedObject var homeVM: HomeViewModel
+    
+    @EnvironmentObject var homeVM: HomeViewModel // ✅ From environment
    
  
     // Constants for navigation height
@@ -39,6 +46,7 @@ struct HomeContentView: View {
                     // Add bottom padding that matches navigation height
                     Spacer().frame(height: bottomNavHeight + bottomPadding + CGFloat.bottomInsets)
                 }
+              
                 .frame(maxWidth: .infinity)
                 .padding()
             }
@@ -107,7 +115,7 @@ struct HomeContentView: View {
              VStack(alignment: .leading, spacing: 24) {
                  // Popular dishes section
                  
-                 
+               //Mark : First give Category List
                  
                  // Categories section
                  if !categories.isEmpty {
@@ -117,7 +125,18 @@ struct HomeContentView: View {
                      
                      LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                          ForEach(categories) { category in
-                             CategoryCard(category: category)
+                             CategoryCard(category: category){
+                              
+                                 //Mark : Naviaget to particuular category List
+                                 // ✅ Handle category tap here
+                                print("Category tapped: \(category.strCategory)")
+                                                                
+                            // Navigate to meal list for this category
+//                                 coordinator.navigate(to: .home(.mealDetail(mealId: category.idCategory)))
+                                 
+                     coordinator.navigate(to: .home(.mealList(categoryName: category.strCategory)))
+                                                                
+                             }
                          }
                      }
                  }
@@ -170,8 +189,8 @@ struct HomeContentView: View {
     let container = PreviewDependencies.container
        let homeVM = container.makeHomeViewModel()
        
-    HomeContentView(homeVM: homeVM)
-        .environmentObject(Router(container: container))
-           .environmentObject(UserViewModel())
+    HomeContentView()
+        //.environmentObject(Router(container: container))
+         
 
 }

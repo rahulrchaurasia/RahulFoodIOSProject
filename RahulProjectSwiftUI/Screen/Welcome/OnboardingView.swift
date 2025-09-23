@@ -11,8 +11,14 @@ struct OnboardingView: View {
     
     // router.setRoot(_root: .loginModule)
     // @EnvironmentObject var authVM : AuthViewModel
-    @EnvironmentObject var router : AppStateRouter
+   // @EnvironmentObject var router : AppStateRouter
+
     @StateObject private var vm = OnboardingViewModel()
+    
+    @EnvironmentObject private var appState: AppState  // 👈 inject global app state
+    @EnvironmentObject private var coordinator : AppCoordinator
+    
+    
     var body: some View {
        
         ZStack{
@@ -45,11 +51,10 @@ struct OnboardingView: View {
                 HStack {
                     if !vm.isLastPage {
                         
-                        
                         Button {
                             //set loginModule
-                            vm.skipOnboarding()
-                            router.setRoot( .loginModule)
+                            completeOnboarding()
+                          //  router.setRoot( .loginModule)
                         } label: {
                             Text("Skip")
                                 .foregroundColor(.blue)
@@ -66,7 +71,7 @@ struct OnboardingView: View {
                     }
                     else {
                         Button("Get Started") {
-                            vm.completeOnboarding()
+                            completeOnboarding()
                         }
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -81,6 +86,12 @@ struct OnboardingView: View {
             
         }
     }
+    
+    
+    private func completeOnboarding() {
+           appState.completeOnboarding()      // ✅ persist onboarding done
+           coordinator.completeOnboarding()   // ✅ switch flow to login
+       }
 }
 
 #Preview {
