@@ -26,9 +26,14 @@ struct ProfileView: View {
         VStack(spacing:0){
             
             // Add custom header at the top
-            CustomNavigationBar(title: "Profile", showBackButton: true) {
+//            CustomNavigationBar(title: "Profile", showBackButton: true) {
+//                
+//              //  router.navigateBack()
+//            }
+            
+            CustomNavigationBar(title: "Profile") {
                 
-              //  router.navigateBack()
+               print("Tap Profile")
             }
             VStack {
                 ZStack {

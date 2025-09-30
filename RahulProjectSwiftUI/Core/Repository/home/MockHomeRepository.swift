@@ -29,12 +29,12 @@ struct MockHomeRepository : HomeRepositoryProtocol {
     
     func getMeals(category: String) async throws -> MealResponse {
         return MealResponse(meals: [
-            Meal(
+            MealSummary(
                 strMeal: "101",
                 strMealThumb: "Grilled Salmon",
                 idMeal: "https://www.themealdb.com/images/media/meals/1548772327.jpg"
             ),
-            Meal(
+            MealSummary(
                 strMeal: "102",
                 strMealThumb: "Shrimp Pasta",
                 idMeal: "https://www.themealdb.com/images/media/meals/1529444830.jpg"
@@ -43,9 +43,19 @@ struct MockHomeRepository : HomeRepositoryProtocol {
     }
     
     func getMealDetails(byId id: String) async throws -> MealDetailResponse {
-        return MealDetailResponse(meals: [
-            MealDetail(idMeal: "1", strMeal: "Mock Meal Detail", strMealThumb: "https://www.themealdb.com/images/media/meals/llcbn01574260722.jpg", strInstructions: "Cook with love ❤️")
-                ])
+        
+        
+        let sampleMeal: Meal = Meal(
+            id: "53050",
+            name: "Ayam Percik",
+            thumbnail: "https://www.themealdb.com/images/media/meals/020z181619788503.jpg",
+            youtubeURL: "https://www.youtube.com/watch?v=9ytR28QK6I8",
+            sourceURL: "http://www.curiousnut.com/roasted-spiced-chicken-ayam-percik/"
+        )
+
+            
+        return MealDetailResponse(meals: [sampleMeal])
+
     }
     
     

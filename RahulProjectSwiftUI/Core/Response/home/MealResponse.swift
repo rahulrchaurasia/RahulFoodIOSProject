@@ -9,11 +9,11 @@ import Foundation
 
 // MARK: - MealResponse
 struct MealResponse: Codable {
-    let meals: [Meal]
+    let meals: [MealSummary]
 }
 
 // MARK: - Meal
-struct Meal: Codable,Identifiable {
+struct MealSummary: Codable,Identifiable {
     let strMeal: String
     let strMealThumb: String
     let idMeal: String

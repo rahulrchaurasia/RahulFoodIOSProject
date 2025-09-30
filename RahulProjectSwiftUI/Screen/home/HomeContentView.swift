@@ -14,9 +14,6 @@ struct HomeContentView: View {
     // ✅ Add reference to coordinator
        @EnvironmentObject private var coordinator: AppCoordinator
 
-    
-  //  @EnvironmentObject var router: AppStateRouter
-    
     // Use ObservedObject since the view model is created at the parent level
    // @ObservedObject var homeVM: HomeViewModel
     
@@ -181,16 +178,36 @@ struct HomeContentView: View {
              .padding()
          }
      }
-
+    
+    
+    
+ 
 }
+
+
+
 
 #Preview {
   
+    
     let container = PreviewDependencies.container
+    
+    // This will call the OVERRIDDEN method and return a MockAppCoordinator
+    // This will now correctly return a MockAppCoordinator.
+    let coordinator = container.makeAppCoordinator()
+    
+    // The container now provides all necessary mock dependencies
        let homeVM = container.makeHomeViewModel()
+    
+    let userVM = UserViewModel() // Or create via container if you set
        
+    
+    
+        
     HomeContentView()
-        //.environmentObject(Router(container: container))
+        .environmentObject(UserViewModel())
+        .environmentObject(container.makeHomeViewModel())
+        .environmentObject(coordinator)
          
 
 }

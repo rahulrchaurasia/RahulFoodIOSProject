@@ -9,12 +9,12 @@ import SwiftUI
 
 struct MealCard: View {
     
-    let meal : Meal
+    let mealSummary : MealSummary
     
     var body: some View {
         
         VStack {
-            AsyncImage(url: URL(string: meal.strMealThumb)) { image in
+            AsyncImage(url: URL(string: mealSummary.strMealThumb)) { image in
                 image.resizable()
                 // This makes the image a square that fills its container
                     .aspectRatio(1, contentMode: .fill)
@@ -27,7 +27,7 @@ struct MealCard: View {
             .clipped()
             // TEXT
             VStack {
-                Text(meal.strMeal)
+                Text(mealSummary.strMeal)
                     .font(.headline)
                     .foregroundColor(.primary)
                     .lineLimit(2)
@@ -50,6 +50,6 @@ struct MealCard: View {
 
 #Preview {
     
-    let meal = Meal(strMeal: "Fish fofos", strMealThumb: "https://www.themealdb.com/images/media/meals/a15wsa1614349126.jpg", idMeal: "1")
-    MealCard(meal: meal)
+    let mealSummary = MealSummary(strMeal: "Fish fofos", strMealThumb: "https://www.themealdb.com/images/media/meals/a15wsa1614349126.jpg", idMeal: "1")
+    MealCard(mealSummary: mealSummary)
 }

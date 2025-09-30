@@ -74,7 +74,14 @@ class DependencyContainer {
         return AuthViewModel(userRepository: userRepository)
     }
     
-    // MARK: - View Factories
+    // MARK: - Coordinator Factories
+        @MainActor
+        func makeAppCoordinator() -> AppCoordinatorProtocol {
+            print("✅ Creating a REAL AppCoordinator for the live app.")
+            return AppCoordinator()
+        }
+    
+      // MARK: - View Factories
 //    @MainActor
 //        func makeHomeView() -> HomeView {
 //            HomeView(

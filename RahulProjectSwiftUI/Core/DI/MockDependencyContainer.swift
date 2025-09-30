@@ -15,7 +15,16 @@ class MockDependencyContainer: DependencyContainer {
         HomeViewModel(homeRepository: makeHomeRepository())
     }
     
-//    override func makeAuthViewModel() -> AuthViewModel {
-//        AuthViewModel(userRepository: MockUserRepository()) // <- if you add a mock
-//    }
+    //    override func makeAuthViewModel() -> AuthViewModel {
+    //        AuthViewModel(userRepository: MockUserRepository()) // <- if you add a mock
+    //    }
+    
+    
+    // MARK: - Coordinator Factories
+    @MainActor
+    override func makeAppCoordinator() -> AppCoordinatorProtocol {
+        print("✅ Creating a MOCK AppCoordinator.")
+        return AppCoordinator()
+    }
+    
 }

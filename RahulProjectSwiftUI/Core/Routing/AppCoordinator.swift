@@ -15,16 +15,25 @@ enum AppFlow {
     case onboarding, login, home
 }
 
-final class AppCoordinator: ObservableObject {
+final class AppCoordinator: ObservableObject, AppCoordinatorProtocol {
+   
     // typed path of destinations (NavigationStack can bind to this)
     @Published var navigationPath: [AppDestination] = []
 
     // which root module is active
     @Published var currentFlow: AppFlow = .onboarding
+    
+    // ✅ 1. Add state to control the side menu's visibility.
+       @Published var showMenu = false
+
 
     private weak var appState: AppState?
     private var cancellables = Set<AnyCancellable>()
 
+    // ✅ 2. Add a helper to check if the menu should be accessible.
+        var isMenuAvailable: Bool {
+            currentFlow == .home
+        }
     // setup after AppState is created (avoid init-time cycles)
     func setup(with appState: AppState) {
         self.appState = appState
@@ -44,13 +53,6 @@ final class AppCoordinator: ObservableObject {
             }
             .store(in: &cancellables)
 
-//        appState.$isLoggedIn
-//            .dropFirst()
-//            .sink { [weak self] logged in
-//                // swiftlint off:next identifier_name
-//                _ = logged
-//            }
-//            .store(in: &cancellables)
 
         appState.$isLoggedIn
             .dropFirst()
@@ -91,6 +93,8 @@ final class AppCoordinator: ObservableObject {
     }
 
     func logout() {
+        // ✅ 3. Reset menu state on logout to ensure a clean UI.
+        showMenu = false
         navigationPath.removeAll()
         currentFlow = .login
     }
@@ -105,7 +109,35 @@ final class AppCoordinator: ObservableObject {
         navigationPath.removeLast()
     }
 
+    
+    
+    func popToPreviousCase(_ type: AppDestination) {
+        guard let index = navigationPath.lastIndex(where: { $0.isSameCase(as: type) }) else { return }
+        navigationPath = Array(navigationPath.prefix(through: index))
+    }
+    
     func popToRoot() {
         navigationPath.removeAll()
     }
+    
+    func navigatePreview(to destination: AppDestination) {
+        
+        print(" MOCK COORDINATOR: navigate to other screen")
+    }
+    
+}
+
+
+/*********************  For Preview Handling ******************************************
+ 
+
+//Define a Coordinator Protocol (Most Important Step)
+First, define a protocol for your coordinator. This decouples your views from a concrete implementation, which makes mocking incredibly easy.
+ 
+ 
+                                
+ ***********************************************************/
+protocol AppCoordinatorProtocol: ObservableObject {
+    func navigatePreview(to destination: AppDestination)
+    
 }

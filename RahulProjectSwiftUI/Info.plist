@@ -25,8 +25,5 @@
 		<string>NunitoSans-Medium.ttf</string>
 		<string>NunitoSans-Regular.ttf</string>
 	</array>
-    
-    <key>UILaunchStoryboardName</key>
-    <string>LaunchScreen</string>
 </dict>
 </plist>

@@ -8,9 +8,11 @@
 import Foundation
 
 struct PreviewDependencies {
-    static var container: DependencyContainer {
-        let container = DependencyContainer(apiService: APIService())
-        // Configure any mock services if needed
-        return container
+    static var container: MockDependencyContainer {
+//        let container = DependencyContainer(apiService: APIService())
+//        // Configure any mock services if needed
+//        return container
+        
+        return MockDependencyContainer()
     }
 }

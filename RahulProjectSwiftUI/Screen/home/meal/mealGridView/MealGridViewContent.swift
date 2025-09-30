@@ -1,41 +1,40 @@
 //
-//  MealGridView.swift
+//  MealGridViewContent.swift
 //  RahulProjectSwiftUI
 //
-//  Created by Rahul Chaurasia on 17/09/25.
+//  Created by Rahul Chaurasia on 24/09/25.
 //
 
 import SwiftUI
 
-struct MealGridView: View {
-   // @ObservedObject var homeVM: HomeViewModel
+struct MealGridViewContent: View {
+    
     @EnvironmentObject var homeVM: HomeViewModel   // just grab it
+    @EnvironmentObject private var coordinator: AppCoordinator
     let category: String
+  
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
     // ✅ Add reference to coordinator
-       @EnvironmentObject private var coordinator: AppCoordinator
+      
 
     var body: some View {
-        
-       // Text("Hi Done")
-        
         Group {
             switch homeVM.mealsState {
             case .idle, .loading:
                 ProgressView("Loading meals...")
 
-            case .success(let meals):
+            case .success(let mealSummary):
                 ScrollView {
                     
                     LazyVGrid(columns: columns, spacing: 16) {
-                        ForEach(meals) { meal in
-
-                                                 
+                        ForEach(mealSummary) { meal in
+                            
+                            
                             Button {
                                 
-     
+                                coordinator.navigate(to: .home(.mealDetail(mealId: meal.idMeal)))
                             } label: {
-                                MealCard(meal: meal)
+                                MealCard(mealSummary: meal)
                             }
                             .buttonStyle(PlainButtonStyle()) // ✅ Important for SwiftUI buttons in lists
                         }
@@ -64,15 +63,11 @@ struct MealGridView: View {
             print("➡️ selected category is: \(category) ")
             await homeVM.getMealList(byCategory: category)
         }
-      
     }
 }
 
 //#Preview {
 //    
-//    let mockContainer = MockDependencyContainer()
-//    let homeVM = mockContainer.makeHomeViewModel()
-//    
-//    
-//    MealGridView(homeVM: homeVM, category: "Chicken")
+//    let homeVM = MockDependencyContainer().makeHomeViewModel()
+//    MealGridViewContent(homeVM: homeVM, category: "22", coordinator: <#T##AppCoordinator#>)
 //}

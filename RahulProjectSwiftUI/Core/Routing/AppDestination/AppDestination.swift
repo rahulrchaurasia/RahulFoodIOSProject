@@ -17,6 +17,11 @@ import SwiftUI
  Using @MainActor for destinationView is best practice because it’s a UI-building function.
 
  */
+
+/* **************** .safeAreaInset ********************************
+ 
+ .safeAreaInset automatically handles the safe area padding and pushes your content down below the notch/status bar.
+ */
 enum AppDestination : Hashable,Equatable {
     
     case onboarding(OnboardingFlow)
@@ -34,6 +39,33 @@ enum AppDestination : Hashable,Equatable {
                 flow.destinationView(container: container)
             }
         }
+}
+
+
+extension AppDestination {
+    func isSameCase(as other: AppDestination) -> Bool {
+        switch (self, other) {
+
+        // Onboarding
+        case (.onboarding, .onboarding): return true
+
+        // Login
+        case (.login, .login): return true
+
+        // HomeFlow cases
+        case (.home(let lhsFlow), .home(let rhsFlow)):
+            switch (lhsFlow, rhsFlow) {
+            case (.home, .home): return true
+            case (.mealList, .mealList): return true
+            case (.mealDetail, .mealDetail): return true
+            case (.order, .order): return true
+            default: return false
+            }
+        
+        default:
+            return false
+        }
+    }
 }
 
 enum OnboardingFlow: Hashable {
@@ -63,32 +95,32 @@ enum LoginFlow: Hashable {
 enum HomeFlow: Hashable {
     case home,
          mealList( categoryName : String),
-         mealDetail(mealId: String)
+         mealDetail(mealId: String),
+         order(mealId: String ,mealName : String)
     
     @MainActor @ViewBuilder
     func destinationView(container: DependencyContainer) -> some View {
         switch self {
         case .home:
-           
+            
             HomeView()
-           
+            
             
         case .mealDetail(let mealId):
             
-           MealDetailScreen(mealId: mealId)
+            MealDetailScreen(mealId: mealId)
             
         case .mealList( let categoryName) :
             
-           
-        
-            VStack(spacing: 0) {
-                        CustomHeader(
-                            title: categoryName,
-                            dismissAction: {  }
-                        )
-                       MealGridView(  category: categoryName)
-                    }
+            
+            MealGridView(  category: categoryName)
+            
+        case .order(let  mealId ,  let mealName) :
+            
+            OrderScreen(mealId: mealId, mealName: mealName )
         }
+        
+        
     }
 }
 

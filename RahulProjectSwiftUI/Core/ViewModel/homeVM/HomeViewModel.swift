@@ -55,8 +55,8 @@ final class HomeViewModel: ObservableObject {
 // MARK: - Network State
     
     @Published private(set)  var CategoryState: ViewState<[Category]> = .idle
-    @Published private(set) var mealsState: ViewState<[Meal]> = .idle
-    @Published private(set) var mealDetailState: ViewState<MealDetail> = .idle
+    @Published private(set) var mealsState: ViewState<[MealSummary]> = .idle
+    @Published private(set) var mealDetailState: ViewState<Meal> = .idle
     
     
     @Published private(set)  var state: ViewState<DishData> = .idle
@@ -75,7 +75,7 @@ final class HomeViewModel: ObservableObject {
         }
     
     
-    func getMealCategory() async {
+    func getMealCategory() async  {
         
         // Skip if already loaded data
        
@@ -101,7 +101,6 @@ final class HomeViewModel: ObservableObject {
                 //alertState = .error(message: Constant.noDataMSG)
             }
             
-           
     
             
         } catch {
@@ -127,12 +126,12 @@ final class HomeViewModel: ObservableObject {
             }
         }
     
-    func clearMealList() {
+        func clearMealList() {
             mealsState = .idle
         }
     
     
-    func getMealDetail(byId id: String) async {
+    func getMealDetail(byId id: String) async   {
             mealDetailState = .loading
             do {
                 let response = try await homeRepository.getMealDetails(byId: id)
