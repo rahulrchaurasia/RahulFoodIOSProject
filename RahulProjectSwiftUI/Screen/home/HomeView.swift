@@ -29,8 +29,14 @@ struct HomeView: View {
     @EnvironmentObject var homeVM: HomeViewModel
     @EnvironmentObject var userVM: UserViewModel
     
+    @StateObject private var carVM: CarViewModel
+    
     @State private var selectedTab: BottomNavigationView.TabItem = .home
     @State private var showMenu = false
+    
+    init(viewModel: CarViewModel) {
+            _carVM = StateObject(wrappedValue: viewModel)
+        }
     
     var body: some View {
         ZStack {
@@ -38,7 +44,7 @@ struct HomeView: View {
 
                 ZStack(alignment: .bottom) {
                     // Main tab content
-                    TabContentView(selectedTab: selectedTab)
+                    TabContentView(carVM: carVM, selectedTab: selectedTab)
                         .offset(x: showMenu && selectedTab == .home ? UIScreen.main.bounds.width * 0.75 : 0)
                         .scaleEffect(showMenu && selectedTab == .home ? 0.9 : 1)
                     
@@ -113,7 +119,7 @@ struct HomeView: View {
 #Preview {
     let container = PreviewDependencies.container
     
-    HomeView()
+    HomeView(viewModel: container.makeCarViewModel())
         .environmentObject(UserViewModel())
         .environmentObject(container.makeHomeViewModel())
        

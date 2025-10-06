@@ -8,13 +8,12 @@
 import SwiftUI
 
 struct CarJourneyContentView: View {
+    
+    // Use ObservedObject since the view model is created at the parent level
+    @ObservedObject var carVM: CarViewModel
     var body: some View {
             VStack {
-                Text("Car Journey")
-                    .font(.largeTitle)
-                    .padding()
-                
-                Spacer()
+                CarJourneyScreen(viewModel: carVM)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color(UIColor.systemGray6))
@@ -22,5 +21,9 @@ struct CarJourneyContentView: View {
 }
 
 #Preview {
-    CarJourneyContentView()
+    
+    let container = PreviewDependencies.container
+    
+    CarJourneyContentView(carVM: container.makeCarViewModel())
+    
 }

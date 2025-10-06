@@ -85,4 +85,6 @@ enum URLType {
 //Seperate URL for Diff URL
 enum APIProvider {
     static let mealDBBaseURL = "https://www.themealdb.com/api/json/v1/1/"
+    
+    static let picsum = "https://picsum.photos/v2/"
 }

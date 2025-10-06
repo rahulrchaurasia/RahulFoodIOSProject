@@ -27,7 +27,7 @@ struct CoordinatorLatestView: View {
                 case .login:
                     LoginNewView() // Replace with your view
                 case .home:
-                    HomeView() // HomeView is now much simpler
+                    HomeView(viewModel: container.makeCarViewModel()) // HomeView is now much simpler
                 }
             }
             .navigationDestination(for: AppDestination.self) { destination in

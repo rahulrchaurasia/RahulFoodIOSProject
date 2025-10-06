@@ -98,13 +98,16 @@ enum HomeFlow: Hashable {
          mealDetail(mealId: String),
          order(mealId: String ,mealName : String)
     
+        
+    
     @MainActor @ViewBuilder
     func destinationView(container: DependencyContainer) -> some View {
         switch self {
         case .home:
             
-            HomeView()
             
+           // HomeView(viewModel: container.makeHomeViewModel())
+            HomeView(viewModel: container.makeCarViewModel())
             
         case .mealDetail(let mealId):
             

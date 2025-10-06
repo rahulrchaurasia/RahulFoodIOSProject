@@ -28,7 +28,7 @@ struct CoordinatorView: View {
                         .transition(.asymmetric(insertion: .move(edge: .leading), removal: .move(edge: .trailing)))
                 case .home:
                   
-                    HomeView() // no init(homeVM:)
+                    HomeView(viewModel: container.makeCarViewModel()) // no init(homeVM:)
                         .transition(.asymmetric(insertion: .opacity.combined(with: .scale), removal: .opacity))
                 }
             }

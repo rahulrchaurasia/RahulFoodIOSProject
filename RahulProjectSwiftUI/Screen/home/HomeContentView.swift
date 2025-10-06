@@ -14,8 +14,7 @@ struct HomeContentView: View {
     // ✅ Add reference to coordinator
        @EnvironmentObject private var coordinator: AppCoordinator
 
-    // Use ObservedObject since the view model is created at the parent level
-   // @ObservedObject var homeVM: HomeViewModel
+ 
     
     @EnvironmentObject var homeVM: HomeViewModel // ✅ From environment
    
@@ -204,7 +203,7 @@ struct HomeContentView: View {
     
     
         
-    HomeContentView()
+    HomeContentView( )
         .environmentObject(UserViewModel())
         .environmentObject(container.makeHomeViewModel())
         .environmentObject(coordinator)

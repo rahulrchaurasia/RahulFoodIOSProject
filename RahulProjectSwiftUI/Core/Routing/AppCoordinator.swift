@@ -109,7 +109,11 @@ final class AppCoordinator: ObservableObject, AppCoordinatorProtocol {
         navigationPath.removeLast()
     }
 
-    
+    //Mark : used coordinator.pop(steps: 2) // goes back 2 screens
+    func pop(steps: Int) {
+        guard steps > 0, steps <= navigationPath.count else { return }
+        navigationPath.removeLast(steps)
+    }
     
     func popToPreviousCase(_ type: AppDestination) {
         guard let index = navigationPath.lastIndex(where: { $0.isSameCase(as: type) }) else { return }
@@ -138,6 +142,7 @@ First, define a protocol for your coordinator. This decouples your views from a 
                                 
  ***********************************************************/
 protocol AppCoordinatorProtocol: ObservableObject {
+    
     func navigatePreview(to destination: AppDestination)
     
 }

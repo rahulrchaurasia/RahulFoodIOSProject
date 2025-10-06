@@ -38,12 +38,24 @@ class DependencyContainer {
            HomeRepository(apiService: apiService)
        }
     
+        // ✅ 1. ADD THE CAR REPOSITORY FACTORY
+        func makeCarRepository() -> CarRepositoryProtocol {
+            CarRepository(apiService: apiService)
+        }
+
+    
     /****************** ViewModel Factories  *************************/
    
     // MARK: - ViewModel Factories
     @MainActor func makeHomeViewModel() -> HomeViewModel {
         print("⚠️ WARNING: Creating a NEW, non-shared HomeViewModel.")
         return HomeViewModel(homeRepository: makeHomeRepository())
+    }
+    
+    // ✅ 2. ADD THE CAR VIEWMODEL FACTORY
+    @MainActor func makeCarViewModel() -> CarViewModel {
+        // This factory method correctly wires up the dependencies.
+        CarViewModel(carRepository: makeCarRepository())
     }
     
     @MainActor

@@ -14,20 +14,22 @@ struct OrderScreen: View {
     let mealName : String?
     
     @EnvironmentObject var coordinator: AppCoordinator
-   
-    // Sample product info
     
-    var productName: String {
-        mealName ?? ""
+    // 1. The view now holds a StateObject for the ViewModel
+    @StateObject private var viewModel : OrderViewModel
+    
+    // 2. The initializer creates the ViewModel, passing the necessary data
+    init(mealId: String, mealName: String?) {
+        
+        // --- THE FIX IS HERE ---
+        self.mealId = mealId
+        self.mealName = mealName
+        _viewModel = StateObject(wrappedValue: OrderViewModel(mealId: mealId, mealName: mealName))
+        
     }
    
-    var price: Double {
-        Double(mealId) ?? 0.0
-    }
-   
-    let gst: Double = 180
-    
-    var total: Double { price + gst }
+      
+       
     
     var body: some View {
             ZStack {
@@ -37,7 +39,7 @@ struct OrderScreen: View {
                 
                 VStack(spacing: 0) {
                     
-                    CustomOrderToolbar(
+                    CustomToolbar(
                         
                     title: "Order Summary",
                     backAction: {
@@ -57,21 +59,21 @@ struct OrderScreen: View {
                     
                     ScrollView {
                         VStack(alignment: .leading, spacing: 16) {
-                            // Product Details
-                            Text(productName)
+                            // 3. All data is now read directly from the ViewModel
+                            Text(viewModel.productName)
                                 .font(.title2)
                                 .bold()
                             
                             HStack {
                                 Text("Price:")
                                 Spacer()
-                                Text("₹\(price, specifier: "%.2f")")
+                                Text(viewModel.price)
                             }
                             
                             HStack {
                                 Text("GST:")
                                 Spacer()
-                                Text("₹\(gst, specifier: "%.2f")")
+                                Text(viewModel.gst)
                             }
                             
                             Divider()
@@ -80,7 +82,7 @@ struct OrderScreen: View {
                                 Text("Total:")
                                     .font(.headline)
                                 Spacer()
-                                Text("₹\(total, specifier: "%.2f")")
+                                Text(viewModel.total)
                                     .font(.headline)
                             }
                             
@@ -91,7 +93,10 @@ struct OrderScreen: View {
                     
                     // Payment button pinned to bottom using safe area
                    
-                    Button(action: { print("Proceed to payment") }) {
+                    Button(action: {
+                      
+                        viewModel.proceedToPayment()
+                    }) {
                         Text("Pay Now")
                             .bold()
                             .frame(maxWidth: .infinity)
@@ -106,6 +111,22 @@ struct OrderScreen: View {
             }
             .navigationBarHidden(true) // hide system navigation bar
             .navigationBarBackButtonHidden(false) // default back button
+        
+            .sheet(isPresented: $viewModel.showReceipt) {
+                
+                // Present the ReceiptView
+                ReceiptView(orderDetails: viewModel.orderDetails) {
+                    // This is the "Back to Home" action.
+                    // It will be executed when the button in ReceiptView is tapped.
+                    viewModel.showReceipt = false // Dismiss the sheet
+                    coordinator.popToRoot()  // Then, navigate home
+                }
+                
+                .presentationDetents([.fraction(0.75), .fraction(0.9)]) // allows medium & large detents
+                .presentationDragIndicator(.visible) // show drag handle
+                
+                .interactiveDismissDisabled(false)  // allow swipe down
+            }
         }
     
     
@@ -115,4 +136,5 @@ struct OrderScreen: View {
     
    
     OrderScreen(mealId: "200", mealName: "Choclate")
+        .environmentObject(MockDependencyContainer().makeAppCoordinator())
 }

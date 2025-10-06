@@ -12,7 +12,7 @@ struct TabContentView: View {
     @EnvironmentObject var userVM: UserViewModel
     //@EnvironmentObject var router: AppStateRouter
     
-   // @ObservedObject var homeVM: HomeViewModel
+    @ObservedObject var carVM: CarViewModel
     @EnvironmentObject var homeVM: HomeViewModel   // ✅ Now from env
     
     let selectedTab: BottomNavigationView.TabItem
@@ -21,11 +21,11 @@ struct TabContentView: View {
             switch selectedTab {
             case .home:
                // HomeContentView( homeVM: homeVM)
-                HomeContentView()   // ✅ No need to pass homeVM
+                HomeContentView( )   // ✅ No need to pass homeVM
             case .transaction:
                 TransactionContentView()
             case .carJourney:
-                CarJourneyContentView()
+                CarJourneyContentView(carVM: carVM)    // FOr Car Journey...
             case .notification:
                 NotificationContentView()
             }
@@ -36,11 +36,14 @@ struct TabContentView: View {
 #Preview {
     
     let apiService = APIService()
+    let container = PreviewDependencies.container
+    
     let homeRepository = HomeRepository(apiService: apiService)
+    let coordinator = container.makeAppCoordinator()
    
     let homeVM = HomeViewModel(homeRepository: homeRepository)
     let selectedTab = BottomNavigationView().selectedTab
-    TabContentView( selectedTab: selectedTab)
+    TabContentView( carVM: container.makeCarViewModel(), selectedTab: selectedTab)
         .environmentObject(homeVM)
        
 }
