@@ -8,27 +8,32 @@
 import SwiftUI
 
 struct TabContentView: View {
-    
-    @EnvironmentObject var userVM: UserViewModel
-    //@EnvironmentObject var router: AppStateRouter
-    
     @ObservedObject var carVM: CarViewModel
-    @EnvironmentObject var homeVM: HomeViewModel   // ✅ Now from env
-    
     let selectedTab: BottomNavigationView.TabItem
+    
+    // We need the binding to pass it down to the home tab
+    @Binding var showMenu: Bool
+
     var body: some View {
-        Group {
-            switch selectedTab {
-            case .home:
-               // HomeContentView( homeVM: homeVM)
-                HomeContentView( )   // ✅ No need to pass homeVM
-            case .transaction:
-                TransactionContentView()
-            case .carJourney:
-                CarJourneyContentView(carVM: carVM)    // FOr Car Journey...
-            case .notification:
-                NotificationContentView()
-            }
+        // The switch now determines the entire view for each tab, including its header
+        switch selectedTab {
+        case .home:
+            // The Home tab gets its content view WITH the header included.
+            HomeContentView(showMenu: $showMenu)
+            
+        case .transaction:
+            // Placeholder for Transaction view
+            //Text("Transaction View"
+           // TransactionContentView()
+            TransactionView()
+        case .carJourney:
+            // ✅ CarJourneyContentView has no extra header. It's just itself.
+          //  CarJourneyContentView(carVM: carVM)
+            CarJourneyScreen(viewModel: carVM)
+            
+        case .notification:
+            // Placeholder for Notification view
+            Text("Notification View")
         }
     }
 }
@@ -43,7 +48,7 @@ struct TabContentView: View {
    
     let homeVM = HomeViewModel(homeRepository: homeRepository)
     let selectedTab = BottomNavigationView().selectedTab
-    TabContentView( carVM: container.makeCarViewModel(), selectedTab: selectedTab)
+    TabContentView( carVM: container.makeCarViewModel(), selectedTab: selectedTab, showMenu: .constant(true))
         .environmentObject(homeVM)
        
 }

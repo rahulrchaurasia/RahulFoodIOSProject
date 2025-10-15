@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CD61F2EF2E94F57D00723294 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = CD61F2EE2E94F57D00723294 /* Kingfisher */; };
 		CD9576BD2CECCD59006A3D14 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = CD9576BC2CECCD59006A3D14 /* FirebaseMessaging */; };
 		CD9576C02CECCD83006A3D14 /* FirebaseDynamicLinks in Frameworks */ = {isa = PBXBuildFile; productRef = CD9576BF2CECCD83006A3D14 /* FirebaseDynamicLinks */; };
 /* End PBXBuildFile section */
@@ -70,6 +71,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD61F2EF2E94F57D00723294 /* Kingfisher in Frameworks */,
 				CD9576BD2CECCD59006A3D14 /* FirebaseMessaging in Frameworks */,
 				CD9576C02CECCD83006A3D14 /* FirebaseDynamicLinks in Frameworks */,
 			);
@@ -142,6 +144,7 @@
 			packageProductDependencies = (
 				CD9576BC2CECCD59006A3D14 /* FirebaseMessaging */,
 				CD9576BF2CECCD83006A3D14 /* FirebaseDynamicLinks */,
+				CD61F2EE2E94F57D00723294 /* Kingfisher */,
 			);
 			productName = RahulProjectSwiftUI;
 			productReference = CD87B89C2CE4A25300C81B25 /* RahulProjectSwiftUI.app */;
@@ -227,6 +230,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				CD9576BB2CECCD59006A3D14 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				CD61F2ED2E94F57D00723294 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CD87B89D2CE4A25300C81B25 /* Products */;
@@ -609,6 +613,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		CD61F2ED2E94F57D00723294 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.6.0;
+			};
+		};
 		CD9576BB2CECCD59006A3D14 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -620,6 +632,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		CD61F2EE2E94F57D00723294 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CD61F2ED2E94F57D00723294 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
 		CD9576BC2CECCD59006A3D14 /* FirebaseMessaging */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CD9576BB2CECCD59006A3D14 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

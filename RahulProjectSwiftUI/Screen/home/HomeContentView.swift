@@ -10,15 +10,13 @@ import SwiftUI
 struct HomeContentView: View {
     
     @EnvironmentObject var userVM: UserViewModel
-    
     // ✅ Add reference to coordinator
-       @EnvironmentObject private var coordinator: AppCoordinator
+    @EnvironmentObject private var coordinator: AppCoordinator
 
- 
-    
     @EnvironmentObject var homeVM: HomeViewModel // ✅ From environment
    
- 
+    @Binding var showMenu: Bool
+    
     // Constants for navigation height
     private let bottomNavHeight: CGFloat = 60
     private let bottomPadding: CGFloat = 8
@@ -40,11 +38,18 @@ struct HomeContentView: View {
                     MealContentView
                     
                     // Add bottom padding that matches navigation height
-                    Spacer().frame(height: bottomNavHeight + bottomPadding + CGFloat.bottomInsets)
+//                    Spacer().frame(height: bottomNavHeight + bottomPadding + CGFloat.bottomInsets)
                 }
               
                 .frame(maxWidth: .infinity)
                 .padding()
+            }
+            .safeAreaInset(edge: .top) {
+                HomeHeaderWithMenu(title: "Home", showMenuIcon: true) {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                        showMenu.toggle()
+                    }
+                }
             }
             
             // Loading indicator
@@ -56,7 +61,7 @@ struct HomeContentView: View {
             }
             
             // Bottom mask to hide scrolled content
-            bottomMask
+           // bottomMask
         }
         .refreshable {
             // Use the explicit refresh function when user pulls to refresh
@@ -74,6 +79,9 @@ struct HomeContentView: View {
 //        })
     }
     
+    
+//bottomMask Not using :-->For manually handling bottomView area
+ //Instead we used.safeAreaInset(edge: .bottom, spacing: 0) { Bottom nav ..
     
     private var bottomMask : some View {
         VStack {
@@ -151,35 +159,37 @@ struct HomeContentView: View {
                  
 
          case .error(let error):
-             VStack {
-                 Image(systemName: "exclamationmark.triangle")
-                     .font(.largeTitle)
-                     .foregroundColor(.red)
-                     .padding()
-                 
-                 Text("Could not load food data")
-                     .font(.headline)
-                 
-                 Text(error.localizedDescription)
-                     .font(.subheadline)
-                     .foregroundColor(.secondary)
-                     .multilineTextAlignment(.center)
-                     .padding()
-                 
-                 Button("Try Again") {
-//                     Task {
-//                         await homeVM.getFoodDetails()
-//                     }
-                 }
-                 .buttonStyle(.bordered)
-                 .padding()
-             }
-             .padding()
+             errorView(error)
          }
      }
     
     
-    
+    private func errorView(_ error: Error) -> some View {
+          VStack {
+              Image(systemName: "exclamationmark.triangle")
+                  .font(.largeTitle)
+                  .foregroundColor(.red)
+                  .padding()
+              
+              Text("Could not load food data")
+                  .font(.headline)
+              
+              Text(error.localizedDescription)
+                  .font(.subheadline)
+                  .foregroundColor(.secondary)
+                  .multilineTextAlignment(.center)
+                  .padding()
+              
+              Button("Try Again") {
+                  Task {
+                      await homeVM.getMealCategory()
+                  }
+              }
+              .buttonStyle(.bordered)
+              .padding()
+          }
+          .padding()
+      }
  
 }
 
@@ -203,7 +213,7 @@ struct HomeContentView: View {
     
     
         
-    HomeContentView( )
+    HomeContentView(  showMenu: .constant(true))
         .environmentObject(UserViewModel())
         .environmentObject(container.makeHomeViewModel())
         .environmentObject(coordinator)

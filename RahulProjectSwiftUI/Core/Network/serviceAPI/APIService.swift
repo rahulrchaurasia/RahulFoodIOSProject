@@ -10,7 +10,7 @@ import Foundation
 
 class APIService: APIServiceProtocol {
     // Environment configuration
-    var environment: APIEnvironment = .production
+    var environment: APIEnvironment = .development
     
     // Networking components
     private let session: URLSession

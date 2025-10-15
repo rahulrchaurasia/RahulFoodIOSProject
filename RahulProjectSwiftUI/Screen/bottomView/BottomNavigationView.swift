@@ -85,6 +85,8 @@ struct BottomNavigationView: View {
                 .overlay(
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
                         .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                       
+
                 )
         )
         .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: -2)
@@ -93,5 +95,25 @@ struct BottomNavigationView: View {
 }
 
 #Preview {
+    
+//    ScrollView() {
+//        
+//        VStack{
+//            Text("hi")
+//        }
+//        .safeAreaInset(edge: .bottom, spacing: 0) {
+//            
+//            // Bottom navigation
+//            BottomNavigationView(selectedTab: $selectedTab)
+//                .padding(.bottom, 8)
+//                .offset(x: showMenu && selectedTab == .home ? UIScreen.main.bounds.width * 0.75 : 0)
+//                .scaleEffect(showMenu && selectedTab == .home ? 0.9 : 1)
+//                .onChange(of: selectedTab) { newValue in
+//                    if newValue != .home && showMenu {
+//                        withAnimation(.spring()) { showMenu = false }
+//                    }
+//                }
+//        }
+//    }
     BottomNavigationView()
 }

@@ -10,6 +10,8 @@ import Foundation
 
 actor CarRepository  : CarRepositoryProtocol {
     
+    
+    
     // ✅ Dependency on your existing APIService protocol
         private let apiService: APIServiceProtocol
 
@@ -42,6 +44,31 @@ actor CarRepository  : CarRepositoryProtocol {
     }
     
     
-    
+    func fetchCarProposal() async throws -> [Proposal] {
+        
+        
+        let headers = ["token": "1234567890"]
+        // just for reference
+//        let body: [String: String] = [
+//            "startdate": "2024-01-01",
+//            "enddate": "2026-11-30",
+//            "empId": "",
+//            "agentId": ""
+//        ]
+        
+       // let requestBody = UserEmailRequest(emailid: email)
+        let requestBody = ProposalRequest(empId: "", agentId: "", startdate: "2024-01-01", enddate: "2026-11-30")
+        let response: CarResponse = try await apiService.request(
+            endpoint: "getProposalMIS",
+            method: .post,
+            urlType: .primary,
+            headers: headers,
+            body: requestBody,
+            queryItems: nil
+        )
+        
+        return response.MasterData.proposals
+       
+    }
     
 }

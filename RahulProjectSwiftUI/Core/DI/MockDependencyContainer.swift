@@ -7,6 +7,8 @@
 
 
 class MockDependencyContainer: DependencyContainer {
+    
+    //Mark : Home
     override func makeHomeRepository() -> HomeRepositoryProtocol {
         MockHomeRepository()
     }
@@ -20,6 +22,15 @@ class MockDependencyContainer: DependencyContainer {
     //    }
     
     
+    //Mark : Car
+    override func makeCarRepository() ->  CarRepositoryProtocol {
+        MockCarRepository()
+    }
+    
+    override func makeCarViewModel() -> CarViewModel {
+        
+        CarViewModel(carRepository: makeCarRepository())
+    }
     // MARK: - Coordinator Factories
     @MainActor
     override func makeAppCoordinator() -> AppCoordinatorProtocol {

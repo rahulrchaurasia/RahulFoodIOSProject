@@ -94,8 +94,32 @@ extension View {
             modifier(SwipeGestureModifier(onSwipe: action))
         }
    
+    
+    
+    /***********************************************************************/
+        // Using  Loader at Zstack level
+        //use :
+        
+//            ScrollView { ... }
+//            .loadingOverlay(viewModel.isLoading)
+        
+    /***********************************************************************/
+     
+    
+    func loadingOverlay(_ isLoading: Bool) -> some View {
+            ZStack {
+                self
+                if isLoading {
+                    Color.black.opacity(0.2).ignoresSafeArea()
+                    ProgressView("Loading...")
+                        .padding()
+                        .background(.ultraThinMaterial)
+                        .cornerRadius(12)
+                }
+            }
+        }
 }
 
 
 
-
+        

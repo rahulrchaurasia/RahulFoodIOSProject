@@ -12,11 +12,11 @@ struct CarJourneyContentView: View {
     // Use ObservedObject since the view model is created at the parent level
     @ObservedObject var carVM: CarViewModel
     var body: some View {
-            VStack {
-                CarJourneyScreen(viewModel: carVM)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color(UIColor.systemGray6))
+                ZStack {
+                    Color(UIColor.systemGray4).ignoresSafeArea()
+                    
+                    CarJourneyScreen(viewModel: carVM)
+                }
         }
 }
 

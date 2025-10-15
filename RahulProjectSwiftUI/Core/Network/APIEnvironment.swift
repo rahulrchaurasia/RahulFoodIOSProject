@@ -18,9 +18,9 @@ enum APIEnvironment {
     var primaryBaseURL: String {
         switch self {
         case .development:
-            return "http://inv.policyboss.com/travel-api/api/"
+            return "http://3.111.3.129/qa-api/api/"
         case .staging:
-            return "http://stage.policyboss.com/travel-api/api"
+            return "http://3.111.3.129/qa-api/api/"
         case .production:
             return "http://zextratravelassist.interstellar.co.in/travel-api/api"
         }

@@ -17,6 +17,8 @@ enum NetworkError: Error, LocalizedError {
     case serverError(Int, Data?)
     case networkUnavailable        // No internet
     case serverUnreachable         // DNS/Host issues
+    
+    case unknown(String?)
     case networkError(Error)
     case decodingError(Error)
     case noData
@@ -48,6 +50,10 @@ enum NetworkError: Error, LocalizedError {
                 return "No internet connection. Please check your network."
             case .serverUnreachable:
                 return "Server is unreachable. Please try again later."
+                
+            case .unknown(let msg):
+                        return msg ?? "An unknown error occurred."
+                
             case .networkError(let error):
                 return "Network error: \(error.localizedDescription)"
             case .decodingError(let error):

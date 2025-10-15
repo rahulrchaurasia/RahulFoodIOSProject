@@ -12,9 +12,11 @@ class DependencyContainer {
     
     let apiService: APIServiceProtocol
     let userRepository: UserRepositoryProtocol
-    
+   
     // This property will HOLD the single instance for the entire Home flow.
-       private var sharedHomeViewModel: HomeViewModel?
+    private var sharedHomeViewModel: HomeViewModel?
+    
+    
 
     
     init(apiService: APIServiceProtocol? = nil) {
@@ -25,7 +27,6 @@ class DependencyContainer {
     
         self.userRepository = UserRepository(apiService: self.apiService)
         //self.orderRepository = OrderRepository(apiService: self.apiService)
-        
         
          
       
@@ -85,6 +86,8 @@ class DependencyContainer {
     @MainActor func makeAuthViewModel() -> AuthViewModel {
         return AuthViewModel(userRepository: userRepository)
     }
+    
+    
     
     // MARK: - Coordinator Factories
         @MainActor
