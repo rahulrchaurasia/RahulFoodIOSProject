@@ -75,7 +75,7 @@ struct HomeView: View {
                 .shadow(color: showMenu && selectedTab == .home ? .black.opacity(0.2) : .clear, radius: 10)
                 .disabled(showMenu && selectedTab == .home)
             }
-            .ignoresSafeArea(.keyboard, edges: .bottom)
+           // .ignoresSafeArea(.keyboard, edges: .bottom)
             
             // Apply safeAreaInset to the main container
             .safeAreaInset(edge: .bottom, spacing: 0) {

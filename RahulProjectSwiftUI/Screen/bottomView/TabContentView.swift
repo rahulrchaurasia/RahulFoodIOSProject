@@ -33,7 +33,10 @@ struct TabContentView: View {
             
         case .notification:
             // Placeholder for Notification view
-            Text("Notification View")
+            //Text("Notification View")
+            
+           // NotificationMain()
+            NotificationLatestView()
         }
     }
 }

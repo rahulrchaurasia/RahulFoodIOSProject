@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		CD61F2EF2E94F57D00723294 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = CD61F2EE2E94F57D00723294 /* Kingfisher */; };
+		CD7412FA2EAA3B3900E1568B /* ScalingHeaderScrollView in Frameworks */ = {isa = PBXBuildFile; productRef = CD7412F92EAA3B3900E1568B /* ScalingHeaderScrollView */; };
 		CD9576BD2CECCD59006A3D14 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = CD9576BC2CECCD59006A3D14 /* FirebaseMessaging */; };
 		CD9576C02CECCD83006A3D14 /* FirebaseDynamicLinks in Frameworks */ = {isa = PBXBuildFile; productRef = CD9576BF2CECCD83006A3D14 /* FirebaseDynamicLinks */; };
 /* End PBXBuildFile section */
@@ -74,6 +75,7 @@
 				CD61F2EF2E94F57D00723294 /* Kingfisher in Frameworks */,
 				CD9576BD2CECCD59006A3D14 /* FirebaseMessaging in Frameworks */,
 				CD9576C02CECCD83006A3D14 /* FirebaseDynamicLinks in Frameworks */,
+				CD7412FA2EAA3B3900E1568B /* ScalingHeaderScrollView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -145,6 +147,7 @@
 				CD9576BC2CECCD59006A3D14 /* FirebaseMessaging */,
 				CD9576BF2CECCD83006A3D14 /* FirebaseDynamicLinks */,
 				CD61F2EE2E94F57D00723294 /* Kingfisher */,
+				CD7412F92EAA3B3900E1568B /* ScalingHeaderScrollView */,
 			);
 			productName = RahulProjectSwiftUI;
 			productReference = CD87B89C2CE4A25300C81B25 /* RahulProjectSwiftUI.app */;
@@ -231,6 +234,7 @@
 			packageReferences = (
 				CD9576BB2CECCD59006A3D14 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				CD61F2ED2E94F57D00723294 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				CD7412F22EA9F7BC00E1568B /* XCRemoteSwiftPackageReference "ScalingHeaderScrollView" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CD87B89D2CE4A25300C81B25 /* Products */;
@@ -621,6 +625,14 @@
 				minimumVersion = 8.6.0;
 			};
 		};
+		CD7412F22EA9F7BC00E1568B /* XCRemoteSwiftPackageReference "ScalingHeaderScrollView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/exyte/ScalingHeaderScrollView.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.1;
+			};
+		};
 		CD9576BB2CECCD59006A3D14 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -636,6 +648,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CD61F2ED2E94F57D00723294 /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		CD7412F92EAA3B3900E1568B /* ScalingHeaderScrollView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ScalingHeaderScrollView;
 		};
 		CD9576BC2CECCD59006A3D14 /* FirebaseMessaging */ = {
 			isa = XCSwiftPackageProductDependency;

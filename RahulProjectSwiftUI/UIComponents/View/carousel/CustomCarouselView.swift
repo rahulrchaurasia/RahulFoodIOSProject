@@ -76,7 +76,7 @@ struct CustomCarouselView: View {
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
-                .frame(height: 200)
+                //.frame(height: 200)
                 .clipped()
                 .gesture(swipeGesture) // Handle manual swipes cleanly
                 
@@ -102,6 +102,7 @@ struct CustomCarouselView: View {
                 emptyStateView
             }
         }
+        .padding(.bottom,8)
     }
     
     // MARK: - Subviews
@@ -148,7 +149,7 @@ struct CustomCarouselView: View {
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
-        .frame(height: 200)
+       // .frame(height: 200)
     }
     
     // MARK: - Gesture Handling

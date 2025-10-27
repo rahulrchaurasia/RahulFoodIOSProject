@@ -24,6 +24,13 @@
 		<string>NunitoSans-ExtraBold.ttf</string>
 		<string>NunitoSans-Medium.ttf</string>
 		<string>NunitoSans-Regular.ttf</string>
+        
+        <string>circe.ttf</string>
+        <string>circe-light.ttf</string>
+        <string>circe-bold.ttf</string>
+        <string>circe-extrabold.ttf</string>
+        <string>circe-extralight.ttf</string>
+        <string>circe-thin.ttf</string>
 	</array>
 </dict>
 </plist>

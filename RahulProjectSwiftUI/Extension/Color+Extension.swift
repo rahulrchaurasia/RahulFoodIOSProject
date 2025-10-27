@@ -58,6 +58,18 @@ extension Color {
         return Color(hex: "EFEFEF")
     }
     
+    
+    static let appDarkGray = Color.hex("#0C0C0C")
+    static let appGray = Color.hex("#0C0C0C").opacity(0.8)
+    static let appLightGray = Color.hex("#0C0C0C").opacity(0.4)
+    static let appYellow = Color.hex("#FFAC0C")
+    
+    //Booking
+    static let appRed = Color.hex("#F62154")
+    static let appBookingBlue = Color.hex("#1874E0")
+    
+    //Profile
+    static let appProfileBlue = Color.hex("#374BFE")
    
     //blue
     
@@ -111,7 +123,19 @@ extension Color {
         static let systemTeal = Color(UIColor.systemTeal)
         static let systemIndigo = Color(UIColor.systemIndigo)
 
+    
+    
 }
+
+extension Color {
+    static func hex(_ hex: String) -> Color {
+        guard let uiColor = UIColor(named: hex) else {
+            return Color.red
+        }
+        return Color(uiColor)
+    }
+}
+
 
 //for use:--  Color(UIColor.customdarkGreen)
 extension UIColor {

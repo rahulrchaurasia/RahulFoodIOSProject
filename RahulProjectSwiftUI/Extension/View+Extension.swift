@@ -49,13 +49,29 @@ extension View {
       }
    
     
+    ///  Custom Font 
+    func fontBold(color: Color = .black, size: CGFloat) -> some View {
+        foregroundColor(color).font(.custom("Circe-Bold", size: size))
+    }
+
+    func fontRegular(color: Color = .black, size: CGFloat) -> some View {
+        foregroundColor(color).font(.custom("Circe", size: size))
+    }
+    
+    
     
     func hideKeyboard() {
            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
        }
     
     
-    
+    /***********************************************************************/
+           // Make View Rounded corner
+    /***********************************************************************/
+
+    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+        clipShape( RoundedCorner(radius: radius, corers: corners) )
+    }
     
 /***********************************************************************/
        // Using  @ViewBuilder

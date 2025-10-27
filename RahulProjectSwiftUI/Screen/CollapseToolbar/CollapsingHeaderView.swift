@@ -17,6 +17,9 @@ struct CollapsingHeaderView: View {
     // For reading the scroll offset
     private let offsetKey = "scrollOffset"
     
+    
+    
+    
     var body: some View {
         ScrollView {
             ZStack(alignment: .top) {

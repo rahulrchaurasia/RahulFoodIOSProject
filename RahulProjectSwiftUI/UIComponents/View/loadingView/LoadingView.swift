@@ -10,14 +10,14 @@ import SwiftUI
 struct LoadingView: View {
     
     var isLoading: Bool
-        var size: CGFloat = 2
-        var color: Color = .blue
+    var size: CGFloat = 2
+    var color: Color = .blue
     var body: some View {
         if isLoading {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: color))
-                        .scaleEffect(size)
-                }
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: color))
+                .scaleEffect(size)
+        }
     }
 }
 

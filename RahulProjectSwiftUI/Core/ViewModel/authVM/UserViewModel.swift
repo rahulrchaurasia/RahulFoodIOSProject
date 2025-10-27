@@ -19,7 +19,7 @@ final class UserViewModel: ObservableObject {
     // MARK: - Form Fields
     @Published var email: String = ""
     @Published var password: String = ""
-    @Published var address: String = ""
+    @Published var address: String = "dummy address added here"
     
     // MARK: - UI State
     @Published var focusedField: LoginField?
