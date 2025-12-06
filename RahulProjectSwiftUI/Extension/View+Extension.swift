@@ -134,8 +134,84 @@ extension View {
                 }
             }
         }
+    
 }
 
 
+/*
+ cornerRadius(_:corner:) → lets you round specific corners (e.g. .topLeft, .bottomRight).
 
-        
+ maxLeft, maxRight, maxCenter → alignment shortcuts.
+
+ t8, v15, h8, etc. → padding shortcuts for consistent UI spacing.
+ */
+extension View {
+    
+    func cornerRadius(_ radius: CGFloat, corner:  UIRectCorner) -> some View {
+        clipShape(RoundedCorner(radius: radius, corers: corner))
+    }
+    
+    
+    // MARK: - Alignment Helpers
+    var maxLeft: some View {
+        self.frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    var maxRight: some View {
+        self.frame(maxWidth: .infinity, alignment: .trailing)
+    }
+
+    var maxCenter: some View {
+        self.frame(maxWidth: .infinity, alignment: .center)
+    }
+
+    // MARK: - Padding Helpers
+    var t8: some View {
+        self.padding(.top, 8)
+    }
+
+    var t15: some View {
+        self.padding(.top, 15)
+    }
+
+    var v8: some View {
+        self.padding(.vertical, 8)
+    }
+
+    var v15: some View {
+        self.padding(.vertical, 15)
+    }
+
+    var v: some View {
+        self.padding(.vertical)
+    }
+
+    var h8: some View {
+        self.padding(.horizontal, 8)
+    }
+
+    var h15: some View {
+        self.padding(.horizontal, 15)
+    }
+
+    var h: some View {
+        self.padding(.horizontal)
+    }
+}
+
+extension View {
+    
+    func withDateInputMasking(text: Binding<String>) -> some View {
+            self.modifier(DateInputModifier(text: text))
+        }
+}
+
+struct RoundedCorner: Shape {
+    var radius: CGFloat = .infinity
+    var corers: UIRectCorner = .allCorners
+    
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corers, cornerRadii: CGSize(width: radius, height: radius))
+        return Path(path.cgPath)
+    }
+}

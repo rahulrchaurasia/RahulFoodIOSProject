@@ -80,7 +80,7 @@ enum OnboardingFlow: Hashable {
 }
 
 enum LoginFlow: Hashable {
-    case login, forgotPassword, signUp
+    case login, forgotPassword, signUp,registerUser
 
     @MainActor @ViewBuilder
     func destinationView(container: DependencyContainer) -> some View {
@@ -88,6 +88,7 @@ enum LoginFlow: Hashable {
         case .login: LoginNewView()
         case .forgotPassword: ForgotPasswordView()
         case .signUp: createAccountView()
+        case .registerUser : RegisterView(viewModel: container.makeLoginViewModel())
         }
     }
 }

@@ -9,37 +9,66 @@
 import Foundation
 import Combine
 
-//Note : AppState here is acting like a session manager that’s backed by UserDefaults.
-//
-//@MainActor
-//final class AppState: ObservableObject {
-//    @Published var hasCompletedOnboarding: Bool
-//    @Published var isLoggedIn: Bool
-//
-//    init() {
-//        let defaults = UserDefaultsManager.shared
-//        self.hasCompletedOnboarding = defaults.hasSeenOnboarding
-//        self.isLoggedIn = defaults.isLoggedIn
-//    }
-//
-//    func completeOnboarding() {
-//        hasCompletedOnboarding = true
-//        UserDefaultsManager.shared.hasSeenOnboarding = true
-//    }
-//
-//    func login() {
-//        isLoggedIn = true
-//        UserDefaultsManager.shared.isLoggedIn = true
-//    }
-//
-//    func logout(resetOnboarding: Bool = false) {
-//        UserDefaultsManager.shared.clearAllCompletely()
-//        
-//        isLoggedIn = false
-//        hasCompletedOnboarding = resetOnboarding ? false : UserDefaultsManager.shared.hasSeenOnboarding
-//    }
-//}
-//
+/*
+ 
+ ***** AppState – runtime observable state *******
+ 
+  >>>> What AppState gives you
+
+ Observable runtime state (@Published) → SwiftUI reacts automatically.
+
+ Centralized source of truth for UI → views don’t care about persistence.
+
+ Encapsulates logic: login, logout, onboarding complete.
+
+ Persistence handled internally: no duplication in views or flows.
+ 
+ 
+ Verdict:
+ * AppState is necessary for good architecture.
+ * Treat it as runtime state layer on top of persistence.
+ * Views, coordinators, and flows interact only with AppState.
+ * UserDefaultsManager is purely storage, no reactivity.
+
+
+
+ @EnvironmentObject var appState: AppState
+
+ Button("Logout") {
+     appState.logout()
+ }
+ SwiftUI automatically reacts and AppCoordinator sees the change and switches flow.
+
+ No direct coupling to UserDefaultsManager in views.
+
+
+ 3️⃣ Architectural View
+ Think of it as layers:
+
+ +-------------------+
+ | SwiftUI Views     |  <-- observe runtime state (AppState)
+ +-------------------+
+          |
+          v
+ +-------------------+
+ | AppState          |  <-- runtime state, @Published, logic
+ +-------------------+
+          |
+          v
+ +-------------------+
+ | UserDefaultsManager | <-- persistent storage
+ +-------------------+
+
+ * Separation of concerns:
+     * Views: display UI based on AppState
+     * AppState: runtime state + business logic
+     * UserDefaultsManager: persistence only
+ ✅ This is clean, testable, scalable.
+
+ */
+
+
+
 
 final class AppState: ObservableObject {
     @Published var hasCompletedOnboarding: Bool

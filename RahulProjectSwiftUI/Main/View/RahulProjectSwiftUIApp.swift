@@ -67,6 +67,9 @@ import SwiftUI
                     .onAppear {
                         // ✅ connect coordinator after everything is alive
                         coordinator.setup(with: appState)
+                        
+                        // Call the second function for the tap gesture
+                        UIApplication.shared.addTapGestureRecognizer()
                     }
                 
             }

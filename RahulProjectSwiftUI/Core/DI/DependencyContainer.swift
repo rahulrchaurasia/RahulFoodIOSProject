@@ -8,101 +8,123 @@
 import Foundation
 
 
-class DependencyContainer {
-    
-    let apiService: APIServiceProtocol
-    let userRepository: UserRepositoryProtocol
-   
-    // This property will HOLD the single instance for the entire Home flow.
-    private var sharedHomeViewModel: HomeViewModel?
-    
-    
+    class DependencyContainer {
+        
+        let apiService: APIServiceProtocol
+        let userRepository: UserRepositoryProtocol
+       
+        // This property will HOLD the single instance for the entire Home flow.
+        private var sharedHomeViewModel: HomeViewModel?
+        
+        
 
-    
-    init(apiService: APIServiceProtocol? = nil) {
         
-        // Initialize service
-        self.apiService = apiService ?? APIService()
+        init(apiService: APIServiceProtocol? = nil) {
+            
+            // Initialize service
+            self.apiService = apiService ?? APIService()
+            
         
-    
-        self.userRepository = UserRepository(apiService: self.apiService)
-        //self.orderRepository = OrderRepository(apiService: self.apiService)
-        
-         
-      
-    }
-    
-    
-    
-    // MARK: - Repository Factories
-       func makeHomeRepository() -> HomeRepositoryProtocol {
-           HomeRepository(apiService: apiService)
-       }
-    
-        // ✅ 1. ADD THE CAR REPOSITORY FACTORY
-        func makeCarRepository() -> CarRepositoryProtocol {
-            CarRepository(apiService: apiService)
+            self.userRepository = UserRepository(apiService: self.apiService)
+            //self.orderRepository = OrderRepository(apiService: self.apiService)
+            
+             
+          
         }
+        
+        
+        
+        // MARK: - Repository Factories
+           func makeHomeRepository() -> HomeRepositoryProtocol {
+               HomeRepository(apiService: apiService)
+           }
+        
+            // ✅ 1. ADD THE CAR REPOSITORY FACTORY
+            func makeCarRepository() -> CarRepositoryProtocol {
+                CarRepository(apiService: apiService)
+            }
 
-    
-    /****************** ViewModel Factories  *************************/
-   
-    // MARK: - ViewModel Factories
-    @MainActor func makeHomeViewModel() -> HomeViewModel {
-        print("⚠️ WARNING: Creating a NEW, non-shared HomeViewModel.")
-        return HomeViewModel(homeRepository: makeHomeRepository())
-    }
-    
-    // ✅ 2. ADD THE CAR VIEWMODEL FACTORY
-    @MainActor func makeCarViewModel() -> CarViewModel {
-        // This factory method correctly wires up the dependencies.
-        CarViewModel(carRepository: makeCarRepository())
-    }
-    
-    @MainActor
-    func makeSharedHomeViewModel() -> HomeViewModel {
-            // If the shared instance already exists, just return it.
-            if let existingViewModel = sharedHomeViewModel {
-                print("✅ Returning EXISTING shared HomeViewModel instance.")
-                return existingViewModel
+            func makeLoginRepository() -> LoginRepositoryProtocol {
+                
+                     LoginRepository(apiService: apiService)
+            }
+        
+           
+            func makeStateRepository() -> StateRepositoryProtocol {
+            
+                  StateRepository()
             }
             
-            // If it doesn't exist, this is the first time we're asking for it.
-            print("✅ Creating a NEW shared HomeViewModel instance for the first time.")
-            let newViewModel = HomeViewModel(homeRepository: makeHomeRepository())
-            
-            // IMPORTANT: Save the new instance so we can reuse it later.
-            self.sharedHomeViewModel = newViewModel
-            
-            // Return the newly created instance.
-            return newViewModel
+        /****************** ViewModel Factories  *************************/
+       
+        // MARK: - ViewModel Factories
+        @MainActor func makeHomeViewModel() -> HomeViewModel {
+            print("⚠️ WARNING: Creating a NEW, non-shared HomeViewModel.")
+            return HomeViewModel(homeRepository: makeHomeRepository())
         }
         
-        // A method to clear the VM when the user logs out or leaves the flow.
-        func clearHomeFlowDependencies() {
-            self.sharedHomeViewModel = nil
+        // ✅ 2. ADD THE CAR VIEWMODEL FACTORY
+        @MainActor func makeCarViewModel() -> CarViewModel {
+            // This factory method correctly wires up the dependencies.
+            CarViewModel(carRepository: makeCarRepository())
         }
-    
-    @MainActor func makeAuthViewModel() -> AuthViewModel {
-        return AuthViewModel(userRepository: userRepository)
-    }
-    
-    
-    
-    // MARK: - Coordinator Factories
+        
         @MainActor
-        func makeAppCoordinator() -> AppCoordinatorProtocol {
-            print("✅ Creating a REAL AppCoordinator for the live app.")
-            return AppCoordinator()
+        func makeSharedHomeViewModel() -> HomeViewModel {
+                // If the shared instance already exists, just return it.
+                if let existingViewModel = sharedHomeViewModel {
+                    print("✅ Returning EXISTING shared HomeViewModel instance.")
+                    return existingViewModel
+                }
+                
+                // If it doesn't exist, this is the first time we're asking for it.
+                print("✅ Creating a NEW shared HomeViewModel instance for the first time.")
+                let newViewModel = HomeViewModel(homeRepository: makeHomeRepository())
+                
+                // IMPORTANT: Save the new instance so we can reuse it later.
+                self.sharedHomeViewModel = newViewModel
+                
+                // Return the newly created instance.
+                return newViewModel
+            }
+            
+            // A method to clear the VM when the user logs out or leaves the flow.
+            func clearHomeFlowDependencies() {
+                self.sharedHomeViewModel = nil
+            }
+        
+        @MainActor func makeAuthViewModel() -> AuthViewModel {
+            return AuthViewModel(userRepository: userRepository)
         }
-    
-      // MARK: - View Factories
-//    @MainActor
-//        func makeHomeView() -> HomeView {
-//            HomeView(
-//                repository: makeHomeRepository()
-//            )
-//        }
-//    
- 
-}
+        
+        
+        @MainActor func makeLoginViewModel() -> LoginViewModel {
+            return LoginViewModel(
+            
+                loginRepository : makeLoginRepository(),
+            
+                stateRepository: makeStateRepository()
+            )
+        }
+        
+        // MARK: - Coordinator Factories
+            @MainActor
+            func makeAppCoordinator() -> AppCoordinatorProtocol {
+                print("✅ Creating a REAL AppCoordinator for the live app.")
+                return AppCoordinator()
+            }
+        
+          // MARK: - View Factories
+    //    @MainActor
+    //        func makeHomeView() -> HomeView {
+    //            HomeView(
+    //                repository: makeHomeRepository()
+    //            )
+    //        }
+    //
+        
+        
+     
+    }
+
+

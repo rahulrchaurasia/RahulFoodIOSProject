@@ -259,7 +259,7 @@ struct LoginNewView: View {
             } label: {
                 Label("Sign up with Apple", systemImage: "apple.logo")
             }
-            .buttonStyle(CapsuleButtonStyle(bgColor: .black))
+            .buttonStyle(CapsuleButtonStyle(bgColor: Color.appWhiteColor))
             
             Spacer().frame(height: 10)
             
@@ -279,7 +279,7 @@ struct LoginNewView: View {
             .buttonStyle(
                 CapsuleButtonStyle(
                     bgColor: .clear,
-                    textColor: .black,
+                    textColor: Color.appWhiteColor,
                     hasBorder: true
                 )
             )
@@ -289,10 +289,12 @@ struct LoginNewView: View {
     private var footerView: some View {
         Button {
            // loginRouter.navigate(to: .createAccount(name: "Data From Login"))
+            
+            coordinator.navigate(to: .login(.registerUser))
         } label: {
             HStack {
                 Text("Don't have an account")
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Color.appBlackColor)
                 
                 Text("Sign up")
                     .foregroundStyle(.teal)
@@ -348,6 +350,7 @@ struct LoginNewView: View {
         }
     }
     
+    // Not in Used
     private func handleLoginStateChange(_ newState: ViewState<User>) {
         if case .success = newState {
             // Navigate to dashboard on successful login

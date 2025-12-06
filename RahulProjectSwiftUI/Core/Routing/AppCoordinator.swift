@@ -5,6 +5,21 @@
 //  Created by Rahul Chaurasia on 09/09/25.
 //
 
+/*
+ AppCoordinator – flow management
+ ✅ Key: AppCoordinator only decides which flow to show, never handles inner navigation.
+ 
+ 
+ ✅ Centralized high-level flow management
+
+  >> currentFlow: AppFlow tracks which root module is active (onboarding, login, home).
+
+ >> Observes AppState (isLoggedIn and hasCompletedOnboarding) to switch flows automatically.
+
+ >> determineInitialFlow() correctly sets the initial root flow when the app launches.
+
+ Separation of responsibilities
+ */
 import Foundation
 
 
@@ -115,11 +130,46 @@ final class AppCoordinator: ObservableObject, AppCoordinatorProtocol {
         navigationPath.removeLast(steps)
     }
     
+    /*
+     popToPreviousCase(_:)
+
+     Pops screens up to the last occurrence of a specific type (AppDestination case).
+     You must know the type you want to pop to.
+     Very straightforward and type-specific.
+
+     eg:  coordinator.popToPreviousCase(.profileScreen)
+
+
+     Pops everything above the last .profileScreen in the stack.
+
+     ✅ Simple, safe, but less flexible.
+     */
     func popToPreviousCase(_ type: AppDestination) {
         guard let index = navigationPath.lastIndex(where: { $0.isSameCase(as: type) }) else { return }
         navigationPath = Array(navigationPath.prefix(through: index))
     }
     
+    
+    // ex: a>coordinator.popUntil { $0.isSameCase(as: .profileScreen) }
+    //  b> Pop until a custom condition
+    /*
+     coordinator.popUntil { destination in
+         destination.shouldStayInStack // some property in AppDestination
+     }
+     */
+    func popUntil(_ predicate: (AppDestination) -> Bool) {
+        guard !navigationPath.isEmpty else { return }
+
+        // Find the last index where predicate is true
+        if let index = navigationPath.lastIndex(where: predicate) {
+            // Keep everything up to that index
+            navigationPath = Array(navigationPath.prefix(through: index))
+        } else {
+            // If no screen matches, pop all (optional)
+            navigationPath.removeAll()
+        }
+    }
+
     func popToRoot() {
         navigationPath.removeAll()
     }

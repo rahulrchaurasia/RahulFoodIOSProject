@@ -5,6 +5,31 @@
 //  Created by Rahul Chaurasia on 26/09/25.
 //
 
+/*
+ The ViewModel is simple and doesn’t depend on external DI/repository logic.
+
+ You just need a quick local instance — like a detail or subview (e.g. MealDetailViewModel).
+
+ There’s no strong need for dependency injection or testing in isolation.
+
+ ⚠️ But:
+
+ It couples your View and ViewModel tightly.
+
+ Harder to test or reuse, because View always creates its own ViewModel.
+
+ In complex apps with many dependencies (repositories, coordinators, etc.), this can break DI consistency.
+ 
+ ********************************
+ For DI Point OF View :
+ 
+    @StateObject private var viewModel: OrderViewModel
+
+     init(viewModel: OrderViewModel) {
+         _viewModel = StateObject(wrappedValue: viewModel)
+     }
+ */
+
 import SwiftUI
 
 struct OrderScreen: View {

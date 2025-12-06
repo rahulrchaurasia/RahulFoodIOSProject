@@ -8,6 +8,10 @@
 import Foundation
 import SwiftUI
 
+/*
+ 
+ 1. Best Practice: Put All Colors in Asset Catalog
+ */
 
 extension Color {
     
@@ -18,10 +22,13 @@ extension Color {
 //    static let bg = Color("bg")
 //    static let skyblue = Color("skyblue")
     
+    static let appBlackColor = Color("app_blackcolor")
+    static let appWhiteColor = Color("app_whitecolor")
     
     static let background = Color("bg")
         static let contentBackground = Color("appgray")
-        static let primary = Color("skyblue")
+       // static let primary = Color("skyblue")
+    //static let primary = Color("app_blackcolor")
         static let blueMenu = Color("bluemenu")
       //  static let accent = Color("appgreen")
         
