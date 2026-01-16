@@ -22,7 +22,34 @@
  Runtime state → AppState (in-memory, ObservableObject used by UI and observed by AppCoordinator).
 
  Navigation → AppCoordinator observes AppState and reacts (no view should directly manipulate the coordinator for root-level flow unless intentionally).
+ 
+ 
+ 
+ For Core Data:
+ 
+ ✅ For Insert in Root View (Very Important)
+
+ Once you inject this at the root:
+
+ .environment(
+     \.managedObjectContext,
+     container.coreDataManager.context
+ )
+
+
+ SwiftUI automatically provides that context to all child views.
+
+ ✅ In HomeContentView, THIS is the correct and recommended way
+ @FetchRequest(
+     entity: CategoryEntity.entity(),
+     sortDescriptors: [
+         NSSortDescriptor(keyPath: \CategoryEntity.strCategory, ascending: true)
+     ]
+ )
+ var savedCategories: FetchedResults<CategoryEntity>
  */
+
+
 
 //*************************************************************************
 
@@ -33,26 +60,45 @@ import SwiftUI
     @main
     struct RahulProjectSwiftUIApp: App {
         
+        // 1. Keep the Container constant
         private let container: DependencyContainer
         
         
         // 2. Declare StateObjects without initialization
-        @StateObject private var userVM: UserViewModel
+        // 2. Declare StateObjects
+        // These will live for the entire lifetime of the app (Global)
         
+        @StateObject private var appState : AppState
+        @StateObject private var coordinator : AppCoordinator
+        @StateObject private var userVM: UserViewModel
         @StateObject private var homeVM : HomeViewModel
 
-        @StateObject private var appState : AppState
-        
-        @StateObject private var coordinator : AppCoordinator
         // 3. Initialize everything in init()
+        // 3. Initialize with Dependency Injection
         init()
         {
             //Lazy Initialization (Recommended)
+            // A. Create the Container first
             let container = DependencyContainer()
             self.container = container
-            _userVM = StateObject(wrappedValue: UserViewModel())
-            _appState = StateObject(wrappedValue: AppState())
+            
+            // B. Initialize StateObjects using the Container
+           // This is the ONLY way to inject dependencies into root-level StateObjects
+            
+           
+            _appState = StateObject(
+                        wrappedValue: AppState(
+                            connectivityMonitor: container.connectivityMonitor
+                        )
+                    )
             _coordinator = StateObject(wrappedValue: AppCoordinator())
+            
+            // UserVM usually needs a repo, so we grab it from container (assuming you update UserVM init later)
+            _userVM = StateObject(wrappedValue: UserViewModel())
+          
+           
+           // ✅ HOME VM: Creating it here makes it the "Single Source of Truth" for the app.
+                    // We call 'makeHomeViewModel' because 'App' will hold the single instance.
             _homeVM = StateObject(wrappedValue: container.makeHomeViewModel())
         }
         
@@ -60,10 +106,13 @@ import SwiftUI
             WindowGroup {
                 
                 CoordinatorView(container: container)   // ✅ pass container
+                    .environment(\.managedObjectContext,
+                                         container.coreDataManager.context) // ✅ REQUIRED
                     .environmentObject(appState)
                     .environmentObject(coordinator)
                     .environmentObject(userVM)
-                    .environmentObject(homeVM)
+                    .environmentObject(homeVM) // ✅ Injected globally
+                    .preferredColorScheme(appState.colorScheme)//✅ Color Scheme
                     .onAppear {
                         // ✅ connect coordinator after everything is alive
                         coordinator.setup(with: appState)

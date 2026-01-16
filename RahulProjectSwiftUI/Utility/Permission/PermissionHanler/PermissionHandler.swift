@@ -5,125 +5,126 @@
 //  Created by Rahul Chaurasia on 05/12/25.
 //
 
-
 import SwiftUI
+import Photos
+import AVFoundation
+
+
+
+//@MainActor
+//final class PermissionHandler: ObservableObject {
+//
+//    @Published private(set) var cameraStatus: AVAuthorizationStatus = .notDetermined
+//    @Published private(set) var photoStatus: PHAuthorizationStatus = .notDetermined
+//
+//    init() {
+//        refreshStatuses()
+//    }
+//
+//    func refreshStatuses() {
+//        cameraStatus = AVCaptureDevice.authorizationStatus(for: .video)
+//        photoStatus = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+//    }
+//
+//    // MARK: - Request Camera
+//    func requestCameraPermission() async {
+//        let granted = await AVCaptureDevice.requestAccess(for: .video)
+//        refreshStatuses()
+//        print("Camera granted:", granted)
+//    }
+//
+//    // MARK: - Request Photos
+//    func requestPhotoLibraryPermission() async {
+//        let status = await PHPhotoLibrary.requestAuthorization(for: .readWrite)
+//        await MainActor.run { self.photoStatus = status }
+//        print("Photos granted:", status == .authorized || status == .limited)
+//    }
+//
+//    // Helper wrappers to call from UI
+//    func handleCameraTap(onGranted: @escaping () -> Void) {
+//        switch cameraStatus {
+//        case .authorized:
+//            onGranted()
+//        case .notDetermined:
+//            Task {
+//                await requestCameraPermission()
+//                if cameraStatus == .authorized { onGranted() }
+//            }
+//        case .denied, .restricted:
+//            openSettings()
+//        @unknown default:
+//            break
+//        }
+//    }
+//
+//    func handlePhotoTap(onGranted: @escaping () -> Void) {
+//        switch photoStatus {
+//        case .authorized, .limited:
+//            onGranted()
+//        case .notDetermined:
+//            Task {
+//                await requestPhotoLibraryPermission()
+//                if photoStatus == .authorized || photoStatus == .limited { onGranted() }
+//            }
+//        case .denied, .restricted:
+//            openSettings()
+//        @unknown default:
+//            break
+//        }
+//    }
+//
+//    // MARK: - Settings
+//    func openSettings() {
+//        guard let url = URL(string: UIApplication.openSettingsURLString),
+//              UIApplication.shared.canOpenURL(url)
+//        else { return }
+//        UIApplication.shared.open(url)
+//    }
+//}
+
+
+
+
+import Foundation
 import AVFoundation
 import Photos
 import UIKit
 
 @MainActor
+
 final class PermissionHandler: ObservableObject {
-    
+
     @Published private(set) var cameraStatus: AVAuthorizationStatus = .notDetermined
     @Published private(set) var photoStatus: PHAuthorizationStatus = .notDetermined
-    
-    private var lifecycleObserver: NSObjectProtocol?
-    
-    init() {
-        refreshStatuses()
-        setupLifecycleObserver()
-    }
-    
-    deinit {
-        if let observer = lifecycleObserver {
-            NotificationCenter.default.removeObserver(observer)
-        }
-    }
-    
-    // MARK: - Current Status
-    func refreshStatuses() {
+
+    init() { refresh() }
+
+    func refresh() {
         cameraStatus = AVCaptureDevice.authorizationStatus(for: .video)
         photoStatus = PHPhotoLibrary.authorizationStatus(for: .readWrite)
     }
-    
-    // MARK: - Camera Permission
-    func requestCameraPermission() async {
-        switch AVCaptureDevice.authorizationStatus(for: .video) {
-        case .authorized:
-            cameraStatus = .authorized
-            
-        case .notDetermined:
-            let granted = await AVCaptureDevice.requestAccess(for: .video)
-            cameraStatus = granted ? .authorized : .denied
-            
-        case .denied:
-            cameraStatus = .denied
-            
-        case .restricted:
-            cameraStatus = .restricted
-            
-        @unknown default:
-            cameraStatus = .notDetermined
-        }
+
+    // MARK: - CAMERA
+    func requestCamera() async -> Bool {
+        let granted = await AVCaptureDevice.requestAccess(for: .video)
+        refresh()
+        return granted
     }
-    
-    // MARK: - Photo Library Permission
-    func requestPhotoLibraryPermission() async {
-        switch PHPhotoLibrary.authorizationStatus(for: .readWrite) {
-        case .authorized, .limited:
-            photoStatus = PHPhotoLibrary.authorizationStatus(for: .readWrite)
-            
-        case .notDetermined:
-            let newStatus = await PHPhotoLibrary.requestAuthorization(for: .readWrite)
-            photoStatus = newStatus
-            
-        case .denied:
-            photoStatus = .denied
-            
-        case .restricted:
-            photoStatus = .restricted
-            
-        @unknown default:
-            photoStatus = .notDetermined
-        }
+
+    // MARK: - PHOTOS
+    func requestPhotos() async -> Bool {
+        let status = await PHPhotoLibrary.requestAuthorization(for: .readWrite)
+        photoStatus = status
+        return status == .authorized || status == .limited
     }
-    
-    // MARK: - Settings
-    func openSettings() {
-        guard let url = URL(string: UIApplication.openSettingsURLString),
-              UIApplication.shared.canOpenURL(url)
-        else { return }
-        
-        UIApplication.shared.open(url)
+
+    // MARK: - Helpers
+    var isCameraAuthorized: Bool {
+        cameraStatus == .authorized
     }
-    
-    // MARK: - App Lifecycle
-    private func setupLifecycleObserver() {
-        lifecycleObserver = NotificationCenter.default.addObserver(
-            forName: UIApplication.willEnterForegroundNotification,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            guard let self else { return }
-            Task { @MainActor in
-                self.refreshStatuses()
-            }
-        }
+
+    var isPhotoAuthorized: Bool {
+        photoStatus == .authorized || photoStatus == .limited
     }
 }
 
-// Simple helper to make the enum printable
-extension AVAuthorizationStatus {
-    var description: String {
-        switch self {
-        case .authorized: return "Allowed"
-        case .denied: return "Denied"
-        case .notDetermined: return "Request"
-        case .restricted: return "Restricted"
-        @unknown default: return "Unknown"
-        }
-    }
-}
-
-extension PHAuthorizationStatus {
-    var description: String {
-        switch self {
-        case .authorized: return "Allowed"
-        case .limited: return "Limited"
-        case .denied: return "Denied"
-        case .notDetermined: return "Request"
-        case .restricted: return "Restricted"
-        @unknown default: return "Unknown"
-        }
-    }
-}

@@ -62,6 +62,7 @@ struct SlideMenuContentView: View {
    // @EnvironmentObject var router: AppStateRouter
     @EnvironmentObject var userVM: UserViewModel
     @EnvironmentObject private var appState: AppState
+    @EnvironmentObject var coordinator: AppCoordinator
     
     // User profile data
     let userName = UserDefaultsManager.shared.loggedInUserName
@@ -200,54 +201,58 @@ struct SlideMenuContentView: View {
         // Access router through environment object or passed parameter
         // Assuming you have access to the router
         
-        switch menuItem.title {
-        case "Home": break
+        guard let destination = menuItem.destination else {return}
+        
+        switch destination{
+        case .home:
             // Navigate to home
            // router.setRoot(.dashboardModule)
+            coordinator.navigate(to: .home(.home))
             
-        case "Profile":
+        case .profile:
             // Navigate to profile
-            let profile = UserProfile(
-                name: UserDefaultsManager.shared.loggedInUserName,
-                                      age: 32,
-                                      gender: .male)
-          //  router.navigate(to: .profile(userProfile: profile))
             
-        case "Forgot Password": break
+            coordinator.navigate(to: .home(.profile))
+         
+        
+        case .forgotPassword: break
            // router.navigate(to: .forgotPassword)
             
-        case "Veg Food", "Non Veg Food": break
-            // Navigate to food category view
-            // Here you might want to pass the category type to the view
-            // router.navigate(to: .foodCategory(type: menuItem.title))
+        case .vegFood, .nonVegFood:
             
-        case "Car", "Bike", "Health": break
-            // Navigate to insurance type view
-            // router.navigate(to: .insurance(type: menuItem.title))
+            coordinator.navigate(to: .home(.agent))
             
-        case "Setting": break
+        case .insurance(let type):
+            
+            //Navigate to Insurance Screen base of Menu
+            coordinator.navigate(to: .home(.insurance(type: type)))
+            
+          case .settings:
             // Navigate to settings
             // router.navigate(to: .settings)
             
-        case "Logout":
+            coordinator.navigate(to: .home(.setting))
+            
+        case .logout :
             // Handle logout
           
            // UserDefaultsManager.shared.logoutUser()
            // router.setRoot( .loginModule)
             
             // Single source of truth: call AppState
-                       appState.logout()
+            appState.logout()
 
             
             
             
-        default:
-            // Default case if the title doesn't match any expected value
-            print("No navigation defined for menu item: \(menuItem.title)")
+//        default:
+//            // Default case if the title doesn't match any expected value
+//            print("No navigation defined for menu item: \(menuItem.title)")
         }
     }
 }
 
 #Preview {
     SlideMenuContentView(isShowing: .constant(true))
+        .background(Color.appLightGray)
 }

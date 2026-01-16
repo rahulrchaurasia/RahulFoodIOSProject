@@ -45,15 +45,17 @@ struct ReceiptView: View {
         ZStack {
             VStack(spacing: 0) {
                 
-            
                 CustomToolbar(title: "Receipt",
-                 closeAction: {
-                    
-                    backToHomeAction()
-                    
-                }, backgroundColor: .systemIndigo)
-                
-                
+                              
+                              rightAction: ToolbarAction(
+                                icon: "xmark",
+                                action: {
+                                    
+                                    backToHomeAction()
+                                }
+                              ),
+                              backgroundColor: .systemIndigo)
+                                
                 
                 ScrollViewReader { proxy in
                     ScrollView {
@@ -112,7 +114,7 @@ struct ReceiptView: View {
                                 .shadow(radius: 3)
                                 
                                 // ✅ 2. ADD AN INVISIBLE ANCHOR AT THE BOTTOM
-                            Spacer().id("bottomAnchor")
+                                Spacer().id("bottomAnchor")
                                 
                             }
                             .padding()
@@ -153,13 +155,12 @@ struct ReceiptView: View {
                     }
                     
                     .task {
-                            proxy.scrollTo("bottomAnchor", anchor: .bottom)
-                        }
+                        proxy.scrollTo("bottomAnchor", anchor: .bottom)
+                    }
                 }
-               
                 
 
-               
+                
             }
             .background(Color(.systemGray6))
             
@@ -171,7 +172,7 @@ struct ReceiptView: View {
                     ShareSheet(activityItems: [pdfURL])
                 }
             }
-           
+            
         }
         // 3. Disable the entire UI to prevent taps while the PDF is generating
         .disabled(viewModel.isGeneratingPDF)

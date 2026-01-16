@@ -42,3 +42,10 @@ extension ViewState: Equatable where T: Equatable {
         }
     }
 }
+
+extension ViewState {
+    var isSuccess: Bool {
+        if case .success = self { return true }
+        return false
+    }
+}

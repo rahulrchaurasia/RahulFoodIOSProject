@@ -8,7 +8,7 @@
 import SwiftUI
 
 
-
+// NOT IN USED 
 struct CoordinatorLatestView: View {
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var coordinator: AppCoordinator

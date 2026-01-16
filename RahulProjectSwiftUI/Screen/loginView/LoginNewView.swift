@@ -31,6 +31,31 @@ AppState is global — onboarding, login, home modules all depend on it.
 UserViewModel is local — only for login screen.
 
 If you mix them, you create tight coupling → every module would need UserViewModel just to check login state, which is wrong.
+ 
+ 
+ >>>>>>>>>>>>>>>
+ For UI Related :
+ ❌ Remove this:
+
+ .ignoresSafeArea()
+ .padding()
+
+
+ ✅ Replace with:
+
+ .safeAreaPadding()
+ 
+ 
+ or move padding inside your ScrollView:
+
+ swift
+ Copy code
+ ScrollView {
+     VStack {
+         ...
+     }
+     .padding()
+ }
  */
 
 //***********************************************************************
@@ -53,21 +78,20 @@ struct LoginNewView: View {
                 VStack(spacing: 16) {
                     // Logo
                     logo
-                    
+                        .padding(.vertical, 10)
                     // Title
                     title
-                    
-                    Spacer().frame(height: 10)
+                        .padding(.vertical, 10)
                     
                     // Form Fields
                     formFields
-                    
-                    Spacer().frame(height: 10)
+                        .padding(.vertical, 10)
+                  
                     
                     // Forgot Password
                     forgotButton
-                    
-                    Spacer().frame(height: 10)
+                        .padding(.vertical, 10)
+                   
                     
                     // Login Button
                     loginButton
@@ -86,6 +110,7 @@ struct LoginNewView: View {
                     // Footer View
                     footerView
                 }
+                .padding()   // ✅ THIS is correct
             }
             .scrollIndicators(.hidden)
             .disableWithOpacity(userVM.loginState == .loading)
@@ -105,8 +130,10 @@ struct LoginNewView: View {
         .navigationTitle("")
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
-        .ignoresSafeArea()
-        .padding()
+        //.ignoresSafeArea()
+        //.padding()
+        .safeAreaInset(edge: .top) { EmptyView() }
+        
         .toolbar {
             keyboardToolbar
         }
@@ -409,7 +436,7 @@ struct LoginNewView_Previews: PreviewProvider {
          
     }
 }
-//#Preview {
+////#Preview {
 //    LoginNewView()
 //}
 

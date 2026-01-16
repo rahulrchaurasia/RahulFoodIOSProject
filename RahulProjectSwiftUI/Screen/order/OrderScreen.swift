@@ -73,10 +73,16 @@ struct OrderScreen: View {
                         coordinator.popToPreviousCase(.home(.mealList(categoryName: "")))
                         
                     },
-                    closeAction: {
-                        
-                        coordinator.popToPreviousCase(.home(.mealList(categoryName: "")))
-                    })
+                    
+                    rightAction: ToolbarAction(
+                            icon: "xmark",
+                            action: {
+                                
+                                coordinator.popToPreviousCase(.home(.mealList(categoryName: "")))
+                            }
+                        )
+                    
+                    )
                     
                     // Title + back button (default NavigationBar)
                     Text("") // Empty placeholder; we use .navigationTitle

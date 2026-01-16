@@ -49,7 +49,9 @@ final class HomeViewModel: ObservableObject {
     
     @Published var hasLoadedInitialData = false
     
-
+    // ✅ ONLY track status, NOT data
+        @Published var isLoading = false     //for Category list only
+        @Published var errorMessage: String?  //for Category list only
     
     
 // MARK: - Network State
@@ -74,6 +76,33 @@ final class HomeViewModel: ObservableObject {
             self.homeRepository = homeRepository
         }
     
+    func syncMealCategories() async {
+        // Skip if already loaded data
+       
+        guard !hasLoadedInitialData else { return }
+        
+        guard !CategoryState.isLoading else { return } // Mark :if state is loading true means its repeat call hence return
+        
+        CategoryState = .loading
+        
+        do {
+            // ✅ Step 3: Just trigger the Sync.
+            // We do NOT wait for 'return data'. We trust the Repo to save it to DB.
+           try await homeRepository.syncMealCategories()
+            
+            hasLoadedInitialData = true
+            print("✅ Sync database Success")
+            
+            isLoading = false
+            
+        } catch {
+            
+            self.errorMessage = error.localizedDescription
+            print("❌ Sync Failed")
+        }
+        
+        isLoading = false
+    }
     
     func getMealCategory() async  {
         
@@ -87,7 +116,7 @@ final class HomeViewModel: ObservableObject {
         
         do {
             
-            let response  = try? await homeRepository.getMealCategory()
+            let response  = try await homeRepository.getMealCategory()
             
             print("URL: ",response ?? "" )
             
@@ -264,24 +293,24 @@ final class HomeViewModel: ObservableObject {
       }
     
     // MARK: - Convenience Properties
-    var isLoading: Bool {
-        if case .loading = state {return true}
-//        if case .loading = userState { return true }
-//        if case .loading = otherDataState { return true }
-        return false
-    }
-    var showError: Bool {
-        get { alertState.isPresented }
-        set {
-            if !newValue {
-                alertState = .hidden
-            }
-        }
-    }
+//    var isLoading: Bool {
+//        if case .loading = state {return true}
+////        if case .loading = userState { return true }
+////        if case .loading = otherDataState { return true }
+//        return false
+//    }
+//    var showError: Bool {
+//        get { alertState.isPresented }
+//        set {
+//            if !newValue {
+//                alertState = .hidden
+//            }
+//        }
+//    }
     
-    var errorMessage: String {
-        alertState.message
-    }
+//    var errorMessage: String {
+//        alertState.message
+//    }
     // *****End Convenience Properties here *****
     
 }

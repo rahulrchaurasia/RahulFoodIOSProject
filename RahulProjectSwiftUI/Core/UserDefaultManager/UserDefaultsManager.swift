@@ -17,6 +17,7 @@ final class UserDefaultsManager {
     // Keys
     private enum Keys {
         static let username = "username"
+        static let themePreference = "themePreference"
         static let isDarkMode = "isDarkMode"
         static let userSettings = "userSettings"
         static let isLoggedIn = "isLoggedIn"
@@ -74,11 +75,28 @@ final class UserDefaultsManager {
         set { defaults.set(newValue, forKey: Keys.username) }
     }
     
-    var isDarkMode: Bool {
-        get { defaults.bool(forKey: Keys.isDarkMode) }
-        set { defaults.set(newValue, forKey: Keys.isDarkMode) }
-    }
+//    var isDarkMode: Bool {
+//        get { defaults.bool(forKey: Keys.isDarkMode) }
+//        set { defaults.set(newValue, forKey: Keys.isDarkMode) }
+//    }
     
+    // MARK: - Theme
+    var themePreference: ThemePreference {
+            get {
+                guard
+                    let raw = defaults.string(forKey: Keys.themePreference),
+                    let value = ThemePreference(rawValue: raw)
+                else {
+                    return .system
+                }
+                return value
+            }
+            set {
+                defaults.set(newValue.rawValue, forKey: Keys.themePreference)
+            }
+        }
+    
+
     var isLoggedIn: Bool {
         get { defaults.bool(forKey: Keys.isLoggedIn) }
         set { defaults.set(newValue, forKey: Keys.isLoggedIn) }

@@ -2,48 +2,48 @@
 //  ProfileView.swift
 //  RahulProjectSwiftUI
 //
-//  Created by Rahul Chaurasia on 15/11/24.
+//  Created by Rahul Chaurasia on 06/12/25.
 //
 
 import SwiftUI
 
+
+
+
+import SwiftUI
+
 struct ProfileView: View {
+
+    @StateObject var vm: ProfileViewModel
+    @EnvironmentObject var coordinator: AppCoordinator
     
-    @EnvironmentObject var authVM : AuthViewModel  // Common ViewModel
-    
-    //@EnvironmentObject var router : AppStateRouter
-    
-    @StateObject private var viewModel = ProfileImageVM()
-    
-    @Environment(\.presentationMode) var presentationMode
-    
-    let myProfile : UserProfile
-    
-   // let name : String
+    //Initialized @StateObject using Dependency Container
+    init(profileVM: ProfileViewModel) {
+        _vm = StateObject(wrappedValue: profileVM)
+    }
     
     var body: some View {
         
-        VStack(spacing:0){
-            
-            // Add custom header at the top
-//            CustomNavigationBar(title: "Profile", showBackButton: true) {
-//                
-//              //  router.navigateBack()
-//            }
-            
-            CustomNavigationBar(title: "Profile") {
+        
+        ZStack {
+            // Background color
+            Color(.systemGray6)
+                .ignoresSafeArea(.all)
+            VStack(spacing:0) {
                 
-               print("Tap Profile")
-            }
-            VStack {
+                CustomToolbar(
+                    title: "Profile",
+                    backAction: {coordinator.navigateBack()
+                    }
+                )
+                
+                // Avatar Section
                 ZStack {
-                    
-                    Circle()
-                        .fill(Color.gray.opacity(0.2))
+                    Circle().fill(Color.gray.opacity(0.2))
                         .frame(width: 150, height: 150)
                     
-                    if let image = viewModel.profileImage {
-                        Image(uiImage: image)
+                    if let img = vm.profileImage {
+                        Image(uiImage: img)
                             .resizable()
                             .scaledToFill()
                             .frame(width: 150, height: 150)
@@ -56,20 +56,19 @@ struct ProfileView: View {
                             .foregroundColor(.gray)
                     }
                     
-                //Mark :Open the BottomSheet Dialog using showMediaPicker
-                    Button(action: { viewModel.showMediaPicker = true }) {
-                        ZStack {
-                            Circle()
-                                .fill(Color.blue)
-                                .frame(width: 40, height: 40)
-                            
-                            Image(systemName: "pencil")
-                                .foregroundStyle(.white)
-                        }
+                    Button {
+                        vm.openPicker()
+                    } label: {
+                        Circle()
+                            .fill(Color.blue)
+                            .frame(width: 40, height: 40)
+                            .overlay(Image(systemName: "pencil").foregroundColor(.white))
                     }
                     .offset(x: 50, y: 50)
                 }
-                .padding(.top, 50)
+                .padding(40)
+                
+                Spacer()
                 
                 Spacer()
                 
@@ -89,28 +88,28 @@ struct ProfileView: View {
                             
                             VStack(alignment: .leading, spacing: 4){
                                 
-                                Text(myProfile.name)
+                                Text("myProfile.name")
                                     .font(.headline)
                                     .fontWeight(.semibold)
                                     .foregroundStyle(Color.appblack )
                                 
-                                Text(myProfile.designation ?? "No Designation")
+                                Text("myProfile.designation" ?? "No Designation")
                                     .font(.footnote)
                                     .foregroundStyle(Color.statusBar)
-                                    
+                                
                             }
                         }
                     }
                     
-
+                    
                     Section("Account") {
                         
                         Button {
                             
                         } label: {
-                           
+                            
                             Label {
-                               
+                                
                                 Text("Sign Out")
                                     .fontWeight(.semibold)
                                     .foregroundStyle(Color.appblack)
@@ -119,15 +118,15 @@ struct ProfileView: View {
                                 Image(systemName: "arrow.left.circle.fill")
                                     .foregroundStyle(.red)
                             }
-
+                            
                         }
                         
                         Button {
                             
                         } label: {
-                           
+                            
                             Label {
-                               
+                                
                                 Text("Delete Account")
                                     .fontWeight(.semibold)
                                     .foregroundStyle(Color.appblack)
@@ -136,60 +135,60 @@ struct ProfileView: View {
                                 Image(systemName: "xmark.circle.fill")
                                     .foregroundStyle(.red)
                             }
-
+                            
                         }
-
+                        
                     }
-                  
+                    
                 }
-               
+                
                 .scrollContentBackground(.hidden) // Disable default background
                 .background(.blue.opacity(0.1)) // Light red background
-                 
+                
+                
             }
         }
-     
-        .navigationTitle("")
-        .navigationBarHidden(true)
-        .navigationBarBackButtonHidden(true)
-      
-        .sheet(isPresented: $viewModel.showCamera) {
-            CameraView(image: $viewModel.profileImage)
+
+        .sheet(item: $vm.activeSheet) { sheet in
+            switch sheet {
+
+            case .permission:
+                PermissionBottomSheet(
+                    handler: vm.permissions,
+                    cameraAction: { vm.requestCameraAndOpen() },
+                    galleryAction: { vm.requestPhotosAndOpen() }
+                )
+
+            case .camera:
+                CameraView(image: Binding(
+                    get: { vm.profileImage },
+                    set: { vm.didPick($0) }
+                ))
+
+            case .gallery:
+                GalleryView(image: Binding(
+                    get: { vm.profileImage },
+                    set: { vm.didPick($0) }
+                ))
+            }
         }
-        .sheet(isPresented: $viewModel.showGallery) {
-            GalleryView(image: $viewModel.profileImage)
-        }
-        //Mark:-> In button we set showMediaPicker true hence its open
-        .sheet(isPresented: $viewModel.showMediaPicker) {
-            ImagePickerBottomSheet(
-                isPresented: $viewModel.showMediaPicker,
-                permissionManager: viewModel.permissionManager,
-                showPermissionAlert: $viewModel.showPermissionAlert,
-                viewModel: viewModel
-            )
-            .presentationDetents([.height(250)])
-        }
+
         .alert("Permission Required",
-               isPresented: $viewModel.showPermissionAlert) {
-            Button("Cancel", role: .cancel) { }
+               isPresented: $vm.showDeniedAlert) {
+
+            Button("Cancel", role: .cancel) {}
+
             Button("Settings") {
-                viewModel.permissionManager.openSettings()
+                vm.openSettings()
             }
+
         } message: {
-            Text("Please enable required permissions in Settings to use this feature")
-        }
-        .onAppear {
-            viewModel.checkPermissions()
+            Text("Please enable \(vm.deniedType == .camera ? "Camera" : "Gallery") access in Settings.")
         }
     }
 }
 
-#Preview
-{
-    let profile = UserProfile(name: "Umesh", age: 32, gender: .male)
-    ProfileView(myProfile: profile)
-        .environmentObject(AuthViewModel(userRepository: DependencyContainer().userRepository))
-    
+
+#Preview {
+    ProfileView(profileVM: DependencyContainer().makeProfileViewModel())
 }
-
-

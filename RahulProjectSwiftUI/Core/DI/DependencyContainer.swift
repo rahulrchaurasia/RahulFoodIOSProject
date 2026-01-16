@@ -8,27 +8,38 @@
 import Foundation
 
 
-    class DependencyContainer {
+class DependencyContainer {
         
         let apiService: APIServiceProtocol
         let userRepository: UserRepositoryProtocol
+        let connectivityMonitor: ConnectivityMonitor
+        
+        // ✅ 1. Hold the CoreDataManager here
+            let coreDataManager: CoreDataManager
        
+        // Shared ViewModel state
         // This property will HOLD the single instance for the entire Home flow.
         private var sharedHomeViewModel: HomeViewModel?
         
         
 
         
-        init(apiService: APIServiceProtocol? = nil) {
+    init(apiService: APIServiceProtocol? = nil,
+         coreDataManager : CoreDataManager = .shared,
+         connectivityMonitor: ConnectivityMonitor = NetworkConnectivityMonitor()
+    ) {
             
             // Initialize service
             self.apiService = apiService ?? APIService()
             
         
+            // ✅ 2. Initialize Core Data (Use passed instance or create new real one)
+            self.coreDataManager = coreDataManager
+            
             self.userRepository = UserRepository(apiService: self.apiService)
             //self.orderRepository = OrderRepository(apiService: self.apiService)
             
-             
+             self.connectivityMonitor = connectivityMonitor
           
         }
         
@@ -36,7 +47,7 @@ import Foundation
         
         // MARK: - Repository Factories
            func makeHomeRepository() -> HomeRepositoryProtocol {
-               HomeRepository(apiService: apiService)
+               HomeRepository(apiService: apiService ,coreDataManager: coreDataManager )
            }
         
             // ✅ 1. ADD THE CAR REPOSITORY FACTORY
@@ -114,17 +125,78 @@ import Foundation
                 return AppCoordinator()
             }
         
-          // MARK: - View Factories
-    //    @MainActor
-    //        func makeHomeView() -> HomeView {
-    //            HomeView(
-    //                repository: makeHomeRepository()
-    //            )
-    //        }
-    //
+  
+        @MainActor func makePermissionHandler() -> PermissionHandler { PermissionHandler() }
         
+        @MainActor  func makeProfileViewModel() -> ProfileViewModel {
+            // This factory method correctly wires up the dependencies.
+            return ProfileViewModel(
+                
+                permissionHandler: makePermissionHandler())
+        }
         
      
     }
+
+
+extension DependencyContainer {
+    
+    // 1. Factory for Repository
+    
+    func makeInsuranceRepository() -> InsuranceRepositoryProtocol {
+            InsuranceRepository(
+                apiService: apiService,
+                context: coreDataManager.context
+            )
+        }
+
+    
+    
+    // 2. Factory for ViewModel
+        @MainActor
+        func makeInsuranceViewModel(for type: InsuranceType) -> InsuranceViewModel {
+            InsuranceViewModel(
+                repository: makeInsuranceRepository(),
+                category: type
+            )
+        }
+    
+    
+    // 3. ✅ NEW Form VM Factory
+        @MainActor
+        func makeInsuranceFormViewModel(for type: InsuranceType) -> InsuranceFormViewModel {
+            InsuranceFormViewModel(
+                repository: makeInsuranceRepository(),
+                category: type
+            )
+        }
+}
+
+extension DependencyContainer {
+    
+    // 1. Factory for Repository
+    
+    func makeAgentRepository() -> AgentRepositoryProtocol {
+        
+          AgentRepository(
+                apiService: apiService,
+               // context: coreDataManager.context
+            )
+        }
+
+    
+    
+    // 2. Factory for ViewModel
+        @MainActor
+        func makeAgentViewModel() -> AgentViewModel {
+            AgentViewModel(
+                repository: makeAgentRepository()
+               
+            )
+        }
+    
+    
+   
+}
 
 

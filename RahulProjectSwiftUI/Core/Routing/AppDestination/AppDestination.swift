@@ -94,12 +94,16 @@ enum LoginFlow: Hashable {
 }
 
 enum HomeFlow: Hashable {
-    case home,
-         mealList( categoryName : String),
-         mealDetail(mealId: String),
-         order(mealId: String ,mealName : String)
     
-         
+    
+    case home
+        case profile
+        case insurance(type: InsuranceType)
+        case mealList(categoryName: String)
+        case mealDetail(mealId: String)
+        case order(mealId: String, mealName: String)
+        case setting
+        case agent
     
     @MainActor @ViewBuilder
     func destinationView(container: DependencyContainer) -> some View {
@@ -109,7 +113,18 @@ enum HomeFlow: Hashable {
             
            // HomeView(viewModel: container.makeHomeViewModel())
             HomeView(viewModel: container.makeCarViewModel())
+           
+        case  .profile:
             
+            ProfileView(profileVM: container.makeProfileViewModel())
+        
+        case .insurance(let type) :
+            
+            InsuranceListView(
+                insuranceViewModel: container.makeInsuranceViewModel(for:  type),
+                container: container)
+            
+    
         case .mealDetail(let mealId):
             
             MealDetailScreen(mealId: mealId)
@@ -122,8 +137,21 @@ enum HomeFlow: Hashable {
         case .order(let  mealId ,  let mealName) :
             
             OrderScreen(mealId: mealId, mealName: mealName )
+            
+          
+        case .agent:
+            
+            AgentListView(agentViewModel: container.makeAgentViewModel())
+            
+        case .setting:
+            
+            AppearanceSettingsView()
+       
+      
         }
         
+        
+   
         
         //Car Journey
         

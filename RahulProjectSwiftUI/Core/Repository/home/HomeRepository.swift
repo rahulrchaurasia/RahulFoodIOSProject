@@ -5,19 +5,44 @@
 //  Created by Rahul Chaurasia on 08/04/25.
 //
 
+
+///
+ /***
+  
+       🔁 Data Flow (Correct)
+              API
+               ↓
+              Repository
+               ↓
+              CoreDataManager.performBackgroundTask()
+               ↓
+              NSPersistentContainer
+               ↓
+              SwiftUI Environment (managedObjectContext)
+               ↓
+              @FetchRequest
+               ↓
+              UI auto-updates
+  */
+
+///
+
 import Foundation
+import CoreData
 
 actor HomeRepository : HomeRepositoryProtocol {
     
     
    
     //static let shared = HomeRepository()
-
+    private let coreDataManager: CoreDataManager
     
     private let apiService: APIServiceProtocol
     
-    init(apiService: APIServiceProtocol) {
+    init(apiService: APIServiceProtocol,
+        coreDataManager: CoreDataManager = .shared) {
         self.apiService = apiService
+        self.coreDataManager = coreDataManager
     }
     
     
@@ -39,6 +64,57 @@ actor HomeRepository : HomeRepositoryProtocol {
     
     
    
+    func syncMealCategories() async throws {
+        
+        let customBaseURL = APIProvider.mealDBBaseURL + "categories.php"
+        // Or use APIProvider
+        
+        // 1. Fetch from API
+        let response: CategoryResponse = try await apiService.request(
+            endpoint: "",
+            method: .get,
+            urlType: .custom(customBaseURL),
+            headers: nil,
+            body: nil,
+            queryItems: nil
+        )
+        
+        let categories = response.categories
+        guard !categories.isEmpty else { return }
+        
+        // 2. Save to Core Data (Background Thread)
+        // We use a 'Continuation' to make sure we wait for the save to finish
+        await withCheckedContinuation { continuation in
+            
+            coreDataManager.performBackgroundTask { context in
+                
+                // Batch processing: Loop through API data
+                for apiItem in categories {
+                    // UPSERT LOGIC: Check if item exists
+                    let request: NSFetchRequest<CategoryEntity> = CategoryEntity.fetchRequest()
+                    request.predicate = NSPredicate(format: "idCategory == %@", apiItem.idCategory)
+                    request.fetchLimit = 1
+                    
+                    let entity: CategoryEntity
+                    
+                    if let existing = try? context.fetch(request).first {
+                        entity = existing // Update existing
+                    } else {
+                        entity = CategoryEntity(context: context) // Create new
+                    }
+                    
+                    // Map Properties
+                    entity.idCategory = apiItem.idCategory
+                    entity.strCategory = apiItem.strCategory
+                    entity.strCategoryThumb = apiItem.strCategoryThumb
+                    entity.strCategoryDescription = apiItem.strCategoryDescription
+                }
+                
+                // performBackgroundTask automatically saves changes
+                continuation.resume()
+            }
+        }
+    }
     
     
     

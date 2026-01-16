@@ -6,6 +6,15 @@
 //
 
 
+/*
+    Object                  Reason
+ //************************************************//
+ 
+ AppState                 Global session / auth
+ AppCoordinator           App-wide navigation
+ UserViewModel            Logged-in user
+ HomeViewModel
+ */
 import SwiftUI
 
 

@@ -57,7 +57,7 @@ class APIService: APIServiceProtocol {
         // Add body if needed
         if let body = body {
         
-              request.httpBody = try encoder.encode(AnyEncodable(body))
+              request.httpBody = try encoder.encode(body)
         }
         
         // 🔍 Debug logging

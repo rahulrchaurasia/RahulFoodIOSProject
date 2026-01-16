@@ -232,7 +232,7 @@ final class AuthViewModel : ObservableObject {
                 if (validAction1() ) {
 
                     
-                    try await fetchUserByEmail(email)
+                     await fetchUserByEmail(email)
                     
                     return true
                 }

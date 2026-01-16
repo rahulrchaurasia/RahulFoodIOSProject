@@ -19,6 +19,22 @@
  >> determineInitialFlow() correctly sets the initial root flow when the app launches.
 
  Separation of responsibilities
+ 
+ 
+ 
+ Logout Tap →
+ View
+   ↓
+ AppState.logout()
+   ↓
+ @Published isLoggedIn = false
+   ↓
+ AppCoordinator observes change
+   ↓
+ navigationPath.removeAll()
+ currentFlow = .login
+   ↓
+ CoordinatorView switches UI
  */
 import Foundation
 
@@ -60,7 +76,7 @@ final class AppCoordinator: ObservableObject, AppCoordinatorProtocol {
         guard let appState = appState else { return }
 
         appState.$hasCompletedOnboarding
-            .dropFirst()
+            //.dropFirst()
             .sink { [weak self] completed in
                 if completed && self?.currentFlow == .onboarding {
                     self?.completeOnboarding()
@@ -70,13 +86,14 @@ final class AppCoordinator: ObservableObject, AppCoordinatorProtocol {
 
 
         appState.$isLoggedIn
-            .dropFirst()
+           // .dropFirst()
             .sink { [weak self] isLoggedIn in
                 self?.handleLoginStateChange(isLoggedIn)
             }
             .store(in: &cancellables)
     }
 
+    /************ VVIMP   Logic for Login and Logout **** ******/
     private func determineInitialFlow() {
         guard let appState = appState else { return }
         if appState.isLoggedIn {
@@ -87,8 +104,10 @@ final class AppCoordinator: ObservableObject, AppCoordinatorProtocol {
             currentFlow = .onboarding
         }
     }
-
+    /* ********************************************** */
     private func handleLoginStateChange(_ isLoggedIn: Bool) {
+        
+        print("🔥 Coordinator observed login change:", isLoggedIn)
         if isLoggedIn && currentFlow == .login {
             completeLogin()
         } else if !isLoggedIn {

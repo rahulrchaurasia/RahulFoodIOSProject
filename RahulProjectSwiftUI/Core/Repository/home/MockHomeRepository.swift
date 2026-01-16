@@ -8,6 +8,13 @@
 import Foundation
 
 struct MockHomeRepository : HomeRepositoryProtocol {
+    
+    
+    func syncMealCategories() async throws {
+        
+        return
+    }
+    
    
     
     func getMealCategory() async throws -> CategoryResponse? {
