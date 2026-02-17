@@ -99,7 +99,8 @@ import SwiftUI
            
            // ✅ HOME VM: Creating it here makes it the "Single Source of Truth" for the app.
                     // We call 'makeHomeViewModel' because 'App' will hold the single instance.
-            _homeVM = StateObject(wrappedValue: container.makeHomeViewModel())
+           // _homeVM = StateObject(wrappedValue: container.makeHomeViewModel())
+            _homeVM = StateObject(wrappedValue: container.makeSharedHomeViewModel())
         }
         
         var body: some Scene {

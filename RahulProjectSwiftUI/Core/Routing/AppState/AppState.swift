@@ -8,7 +8,8 @@
 
 import Foundation
 import Combine
-import SwiftUICore
+import SwiftUI
+import CoreData
 
 /*
  
@@ -72,14 +73,17 @@ import SwiftUICore
 
 
 final class AppState: ObservableObject {
-    @Published private(set) var hasCompletedOnboarding: Bool
+   
     @Published private(set) var isLoggedIn: Bool
+    @Published private(set) var hasCompletedOnboarding: Bool
+    
     @Published private(set) var isOnline: Bool = true
     
     private let connectivityMonitor: ConnectivityMonitor
     private let userDefaults: UserDefaultsManager
     private var cancellables = Set<AnyCancellable>()
     
+    private let coreData: CoreDataManager
     // MARK: - Theme
     @Published private(set) var themePreference: ThemePreference
    
@@ -88,7 +92,8 @@ final class AppState: ObservableObject {
     init(
         
         connectivityMonitor: ConnectivityMonitor,
-        userDefaults: UserDefaultsManager = .shared
+        userDefaults: UserDefaultsManager = .shared,
+        coreData: CoreDataManager = .shared
     ) {
         // Read persisted flags (or default false)
         //        self.hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
@@ -97,6 +102,7 @@ final class AppState: ObservableObject {
         //let defaults = UserDefaultsManager.shared
         
         self.userDefaults = userDefaults
+        self.coreData = coreData
         self.connectivityMonitor = connectivityMonitor
        
         self.hasCompletedOnboarding = userDefaults.hasSeenOnboarding
@@ -131,31 +137,81 @@ final class AppState: ObservableObject {
         userDefaults.isLoggedIn = true
     }
 
-//    func logout() {
-//        isLoggedIn = false
-//        //UserDefaults.standard.set(false, forKey: "isLoggedIn")
-//        userDefaults.logoutUser()
-//    }
-    
-    func logout(resetOnboarding: Bool = false) {
-            // 1) Clear persisted user-specific data
-           // UserDefaultsManager.shared.clearUserSessionData(clearOnboarding: resetOnboarding)
-            userDefaults.clearAllCompletely()
 
-            // 2) Update runtime state
-            isLoggedIn = false
+    
+    private func clearCoreData() {
+            let context = coreData.context
+            context.performAndWait {
+                let entities = context.persistentStoreCoordinator?.managedObjectModel.entities ?? []
+                for entity in entities {
+                    let request = NSBatchDeleteRequest(
+                        fetchRequest: NSFetchRequest<NSFetchRequestResult>(entityName: entity.name!)
+                    )
+                    try? context.execute(request)
+                }
+                try? context.save()
+            }
+        }
+    
+    /// 🔥 SINGLE logout entry point
+    func logout() {
+            // 1️⃣ Clear persistence
+//            userDefaults.clearAllCompletely()
+//            clearCoreData()
+//
+//            // 2️⃣ Update runtime state
+//            isLoggedIn = false
+//            hasCompletedOnboarding = userDefaults.hasSeenOnboarding
+            
         
-             if resetOnboarding {
-                   
-                 hasCompletedOnboarding = false
-              }
+        print("🔴 AppState.logout() called")
+         print("   Before: isLoggedIn=\(isLoggedIn), hasOnboarding=\(hasCompletedOnboarding)")
+                
+        // ✅ STEP 1: Store onboarding state BEFORE clearing anything
+            // This prevents users from being sent back to onboarding screen
+            let wasOnboardingCompleted = hasCompletedOnboarding
+            
+            // ✅ STEP 2: Clear user session data (NOT onboarding state)
+            // Changed from clearAllCompletely() to clearUserData()
         
-//            if resetOnboarding == false {
-//                // keep hasCompletedOnboarding as-is (usually true)
-//                hasCompletedOnboarding = UserDefaultsManager.shared.hasSeenOnboarding
-//            } else {
-//                hasCompletedOnboarding = false
-//            }
+               userDefaults.clearAllCompletely()
+                    
+                // ✅ STEP 3: Clear CoreData
+                clearCoreData()
+                
+                // ✅ STEP 4: Update login state
+                // This triggers the observer in AppCoordinator
+                isLoggedIn = false
+                
+                // ✅ STEP 5: Restore onboarding state
+                // This ensures determineInitialFlow() sends users to login, not onboarding
+                if wasOnboardingCompleted {
+                    Task { @MainActor in
+                        self.hasCompletedOnboarding = true
+                        self.userDefaults.hasSeenOnboarding = true
+                    }
+                }
+                
+                print("   After: isLoggedIn=\(isLoggedIn), hasOnboarding=\(hasCompletedOnboarding)")
+                print("✅ AppState.logout() completed")
+        
+        
+            
+            // 1️⃣ Save the onboarding status before wiping data
+//                let hadSeenOnboarding = userDefaults.hasSeenOnboarding
+//                
+//                // 2️⃣ Clear persistence (Keep your existing clear logic)
+//                userDefaults.clearAllCompletely()
+//                clearCoreData()
+//                
+//                // 3️⃣ RESTORE onboarding status so we go to Login, not Onboarding
+//                userDefaults.hasSeenOnboarding = hadSeenOnboarding
+//                
+//                // 4️⃣ Update runtime state (On Main Thread)
+//                Task { @MainActor in
+//                    self.hasCompletedOnboarding = hadSeenOnboarding
+//                    self.isLoggedIn = false
+//                }
         }
 }
 

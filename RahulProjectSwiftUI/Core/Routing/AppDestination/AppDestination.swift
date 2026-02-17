@@ -55,7 +55,7 @@ extension AppDestination {
         // HomeFlow cases
         case (.home(let lhsFlow), .home(let rhsFlow)):
             switch (lhsFlow, rhsFlow) {
-            case (.home, .home): return true
+//            case (.home, .home): return true
             case (.mealList, .mealList): return true
             case (.mealDetail, .mealDetail): return true
             case (.order, .order): return true
@@ -96,7 +96,7 @@ enum LoginFlow: Hashable {
 enum HomeFlow: Hashable {
     
     
-    case home
+    //case home
         case profile
         case insurance(type: InsuranceType)
         case mealList(categoryName: String)
@@ -108,11 +108,9 @@ enum HomeFlow: Hashable {
     @MainActor @ViewBuilder
     func destinationView(container: DependencyContainer) -> some View {
         switch self {
-        case .home:
-            
-            
-           // HomeView(viewModel: container.makeHomeViewModel())
-            HomeView(viewModel: container.makeCarViewModel())
+//        case .home:
+//           // HomeView(viewModel: container.makeHomeViewModel())
+//            HomeView(viewModel: container.makeCarViewModel())
            
         case  .profile:
             
@@ -141,7 +139,10 @@ enum HomeFlow: Hashable {
           
         case .agent:
             
-            AgentListView(agentViewModel: container.makeAgentViewModel())
+          //  AgentListView(agentViewModel: container.makeAgentViewModel())
+            
+           // EmptyView()
+            LocationScreen()
             
         case .setting:
             

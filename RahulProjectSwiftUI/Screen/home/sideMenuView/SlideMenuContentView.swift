@@ -204,30 +204,31 @@ struct SlideMenuContentView: View {
         guard let destination = menuItem.destination else {return}
         
         switch destination{
-        case .home:
+        case .home: break
             // Navigate to home
-           // router.setRoot(.dashboardModule)
-            coordinator.navigate(to: .home(.home))
+            // router.setRoot(.dashboardModule)
+            // coordinator.navigate(to: .home(.home))
             
         case .profile:
             // Navigate to profile
             
             coordinator.navigate(to: .home(.profile))
-         
-        
+            
+            
         case .forgotPassword: break
-           // router.navigate(to: .forgotPassword)
+            // router.navigate(to: .forgotPassword)
             
         case .vegFood, .nonVegFood:
             
-            coordinator.navigate(to: .home(.agent))
+              coordinator.navigate(to: .home(.agent))
             
+        
         case .insurance(let type):
             
             //Navigate to Insurance Screen base of Menu
             coordinator.navigate(to: .home(.insurance(type: type)))
             
-          case .settings:
+        case .settings:
             // Navigate to settings
             // router.navigate(to: .settings)
             
@@ -235,20 +236,26 @@ struct SlideMenuContentView: View {
             
         case .logout :
             // Handle logout
-          
-           // UserDefaultsManager.shared.logoutUser()
-           // router.setRoot( .loginModule)
-            
-            // Single source of truth: call AppState
+            // appState.logout()
+            print("👤 Menu: Logout tapped")
+            withAnimation {
+                isShowing = false
+            }
             appState.logout()
-
+//            
+        
             
-            
-            
-//        default:
-//            // Default case if the title doesn't match any expected value
-//            print("No navigation defined for menu item: \(menuItem.title)")
+            //        default:
+            //            // Default case if the title doesn't match any expected value
+            //            print("No navigation defined for menu item: \(menuItem.title)")
+                 
         }
+    }
+    
+    
+    
+    func performEmergencyLogoutNow() {
+        
     }
 }
 

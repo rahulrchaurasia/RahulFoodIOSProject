@@ -7,6 +7,27 @@
 
 import Foundation
 
+/*
+ “DependencyContainer centralizes dependency creation using constructor injection.
+ It builds repositories and ViewModels, manages shared instances like HomeViewModel, and keeps SwiftUI views free from object creation.
+ This improves testability, separation of concerns, and prevents state duplication across navigation flows.”
+ 
+ 
+
+ 
+ You already have this split:
+
+ Layer     Your Class           Role
+ State      AppState            Owns isLoggedIn,hasCompletedOnboarding,theme,network
+ Storage   UserDefaultsManager  Persists session
+ DI        DependencyContainer    Builds everything
+
+ 
+ ** Factory Pattern **
+ Factory creates objects without exposing the creation logic to the client.
+ In my project, DependencyContainer acts as a Factory:
+ 
+ */
 
 class DependencyContainer {
         

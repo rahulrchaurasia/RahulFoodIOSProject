@@ -111,6 +111,7 @@ struct LoginNewView: View {
                     footerView
                 }
                 .padding()   // ✅ THIS is correct
+                 Spacer()
             }
             .scrollIndicators(.hidden)
             .disableWithOpacity(userVM.loginState == .loading)
@@ -163,24 +164,7 @@ struct LoginNewView: View {
                //  coordinator.completeLogin()
             }
            
-//            switch newState {
-//            case .success(let user):
-//                // 1) Update the global session (single source of truth)
-//                guard !appState.isLoggedIn else { return } // idempotency guard
-//                appState.login() // persists isLoggedIn
-//                
-//                // 2) Let coordinator observe AppState and switch flow automatically,
-//                //    OR call coordinator directly if you prefer immediate explicit navigation:
-//                // coordinator.completeLogin()
-//                //
-//                // Prefer to let coordinator observe appState for separation of concerns.
-//            case .error(let err):
-//                // logging/analytics can go here
-//                print("Login failed: \(err.localizedDescription)")
-//            case .loading, .idle:
-//                print("Loading")
-//                
-//            }
+
                   
         }
         .onSubmit {
@@ -205,7 +189,7 @@ struct LoginNewView: View {
     
     private var formFields: some View {
         VStack(alignment: .leading) {
-            // Email Field
+            // Email Field  john@example.com
             LineTextField(
                 placeholder: "Email or Phone Number",
                 text: $userVM.email,

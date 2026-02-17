@@ -5,7 +5,7 @@
 //  Created by Rahul Chaurasia on 27/11/24.
 //
 
-import SwiftUICore
+import SwiftUI
 import SwiftUI
 
 // Usage:

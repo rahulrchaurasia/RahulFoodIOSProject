@@ -25,7 +25,7 @@ final class UserDefaultsManager {
         
         // Add this to get all keys
         static var allKeys: [String] {
-                return [username, isDarkMode, userSettings, isLoggedIn]
+                return [username, isDarkMode, userSettings, isLoggedIn,"loggedInUser"]
         }
     }
     
@@ -102,6 +102,8 @@ final class UserDefaultsManager {
         set { defaults.set(newValue, forKey: Keys.isLoggedIn) }
     }
     
+    //👉 Only stores the flag.
+    // No logic. No decisions.
     var hasSeenOnboarding: Bool {
             get { defaults.bool(forKey: Keys.hasSeenOnboarding) }
             set { defaults.set(newValue, forKey: Keys.hasSeenOnboarding) }
@@ -142,6 +144,25 @@ final class UserDefaultsManager {
                defaults.synchronize() // Ensures changes take effect immediately
            }
        }
+    
+    // ✅ CHANGE 2: NEW METHOD - Clears only user session data
+        // This preserves onboarding state so users don't see onboarding again after logout
+        // MARK: - Clear User Session Data (Preserves Onboarding State)
+        func clearUserData() {
+            // Clear user-specific data only
+            Keys.allKeys.forEach { key in
+                defaults.removeObject(forKey: key)
+            }
+            
+            // ⚠️ IMPORTANT: We do NOT clear hasSeenOnboarding here
+            // This ensures logged-out users go to login, not onboarding
+            
+            // Reset login state
+           // isLoggedIn = false
+            
+            print("✅ UserDefaults: Cleared user data (preserved onboarding state)")
+        }
+        
 }
 
 // Your custom settings model

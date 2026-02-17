@@ -213,7 +213,7 @@ private func largeHeader(progress: CGFloat) -> some View {
             HStack {
              
                 Button {
-                    coordinator.navigate(to: .home(.home))
+                   // coordinator.navigate(to: .home(.home))
                 } label: {
                     Image(systemName: "arrow.backward")
                         .font(.system(size: 18, weight: .medium))

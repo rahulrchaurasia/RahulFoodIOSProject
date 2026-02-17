@@ -60,7 +60,8 @@ final class AppCoordinator: ObservableObject, AppCoordinatorProtocol {
 
     private weak var appState: AppState?
     private var cancellables = Set<AnyCancellable>()
-
+    private var didSetInitialFlow = false
+    
     // ✅ 2. Add a helper to check if the menu should be accessible.
         var isMenuAvailable: Bool {
             currentFlow == .home
@@ -68,52 +69,117 @@ final class AppCoordinator: ObservableObject, AppCoordinatorProtocol {
     // setup after AppState is created (avoid init-time cycles)
     func setup(with appState: AppState) {
         self.appState = appState
-        setupObservers()
-        determineInitialFlow()
+        observeLoginState()
+       
+        guard !didSetInitialFlow else { return }
+              didSetInitialFlow = true
+              determineInitialFlow()
     }
 
-    private func setupObservers() {
-        guard let appState = appState else { return }
+    //Mark : Not in Used
+//    private func setupObserversOLD() {
+//        guard let appState = appState else { return }
+//
+//        appState.$hasCompletedOnboarding
+//            //.dropFirst()
+//            .receive(on: DispatchQueue.main) // ✅ Add this
+//            .sink { [weak self] completed in
+//                if completed && self?.currentFlow == .onboarding {
+//                    self?.completeOnboarding()
+//                }
+//            }
+//            .store(in: &cancellables)
+//
+//
+//        appState.$isLoggedIn
+//           // .dropFirst()
+//            .receive(on: DispatchQueue.main) // ✅ Add this (Crucial for Logout)
+//            .sink { [weak self] isLoggedIn in
+//                self?.handleLoginStateChange(isLoggedIn)
+//            }
+//            .store(in: &cancellables)
+//    }
+    
+    //This is ✅ better than handleLoginStateChange
+   // This is cleaner, safer, and deterministic.
+    private func observeLoginState() {
+           appState?.$isLoggedIn
+              //.dropFirst()
+               .receive(on: DispatchQueue.main)
+               .removeDuplicates() // ✅ Prevents duplicate events
+               .sink { [weak self] loggedIn in
+                   
+                   print("🔵 AppCoordinator: isLoggedIn changed to \(loggedIn)")
+                   loggedIn ? self?.showHome() : self?.handleLogout()
+               }
+               .store(in: &cancellables)
+       }
 
-        appState.$hasCompletedOnboarding
-            //.dropFirst()
-            .sink { [weak self] completed in
-                if completed && self?.currentFlow == .onboarding {
-                    self?.completeOnboarding()
-                }
-            }
-            .store(in: &cancellables)
+      private func showHome() {
+          
+          print("🟢 AppCoordinator: Showing home")
+            navigationPath.removeAll()
+            currentFlow = .home
+        }
 
-
-        appState.$isLoggedIn
-           // .dropFirst()
-            .sink { [weak self] isLoggedIn in
-                self?.handleLoginStateChange(isLoggedIn)
-            }
-            .store(in: &cancellables)
+    private func handleLogout() {
+        
+        print("🔴 AppCoordinator: Handling logout")
+        
+        // ✅ Close menu immediately
+        showMenu = false
+        
+        // ✅ Clear navigation
+        navigationPath.removeAll()
+        
+        
+        navigationPath.removeAll()
+        
+        // ✅ Small delay to ensure AppState updates have propagated
+        // This prevents race conditions where determineInitialFlow reads stale data
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            self?.determineInitialFlow()
+        }
+        
     }
-
     /************ VVIMP   Logic for Login and Logout **** ******/
     private func determineInitialFlow() {
-        guard let appState = appState else { return }
+        guard let appState else {
+            print("⚠️ AppCoordinator: appState is nil")
+            return
+        }
+        
+        print("🎯 AppCoordinator.determineInitialFlow()")
+        print("   isLoggedIn: \(appState.isLoggedIn)")
+        print("   hasCompletedOnboarding: \(appState.hasCompletedOnboarding)")
+        
         if appState.isLoggedIn {
+            print("   → Setting flow to .home")
             currentFlow = .home
         } else if appState.hasCompletedOnboarding {
+            print("   → Setting flow to .login ✅ THIS SHOULD HAPPEN ON LOGOUT")
             currentFlow = .login
         } else {
+            print("   → Setting flow to .onboarding")
             currentFlow = .onboarding
         }
     }
     /* ********************************************** */
-    private func handleLoginStateChange(_ isLoggedIn: Bool) {
-        
-        print("🔥 Coordinator observed login change:", isLoggedIn)
-        if isLoggedIn && currentFlow == .login {
-            completeLogin()
-        } else if !isLoggedIn {
-            logout()
-        }
-    }
+//    private func handleLoginStateChange(_ isLoggedIn: Bool) {
+//        
+//        print("🔥 Coordinator Debug: isLoggedIn = \(isLoggedIn), currentFlow = \(currentFlow)")
+//                print("🧵 Coordinator Thread: \(Thread.isMainThread ? "Main" : "Background")") // Should be Main
+//
+//                if isLoggedIn && currentFlow == .login {
+//                    print("✅ Coordinator Conditions met, calling completeLogin()")
+//                    completeLogin()
+//                } else if !isLoggedIn {
+//                    print("✅ Coordinator Conditions met, calling logout()")
+//                    logout()
+//                } else {
+//                    print("⚠️ Coordinator Conditions NOT met. No Action taken.")
+//                }
+//    }
 
     // MARK: - Flow transitions
     func completeOnboarding() {
@@ -126,12 +192,12 @@ final class AppCoordinator: ObservableObject, AppCoordinatorProtocol {
         currentFlow = .home
     }
 
-    func logout() {
-        // ✅ 3. Reset menu state on logout to ensure a clean UI.
-        showMenu = false
-        navigationPath.removeAll()
-        currentFlow = .login
-    }
+//    func logout() {
+//        // ✅ 3. Reset menu state on logout to ensure a clean UI.
+//        showMenu = false
+//        navigationPath.removeAll()
+//        currentFlow = .login
+//    }
 
     // MARK: - deep navigation
     func navigate(to destination: AppDestination) {

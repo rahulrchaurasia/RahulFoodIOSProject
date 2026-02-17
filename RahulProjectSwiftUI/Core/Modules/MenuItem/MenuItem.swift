@@ -97,7 +97,7 @@ struct MenuDataProvider {
         let insuranceItem = MenuItem(title: "Insurance", icon: "shield.fill", children: insuranceChildren)
         
         let settingItem =  MenuItem(title: "Setting", icon: "gearshape.fill",destination: .settings)
-        let logoutItem = MenuItem(title: "Logout", icon: "arrow.right.square")
+        let logoutItem = MenuItem(title: "Logout", icon: "arrow.right.square", destination: .logout)
         
         return [homeItem, categoryItem, insuranceItem,settingItem, logoutItem]
     }
