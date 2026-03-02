@@ -435,6 +435,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = RahulProjectSwiftUI/RahulProjectSwiftUI.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"RahulProjectSwiftUI/Preview Content\"";
@@ -444,6 +445,7 @@
 				INFOPLIST_FILE = RahulProjectSwiftUI/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = MyApp;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Need Camera Permission";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We use your location to show local weather and events.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Need Photo Permission";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -472,6 +474,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = RahulProjectSwiftUI/RahulProjectSwiftUI.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"RahulProjectSwiftUI/Preview Content\"";
@@ -481,6 +484,7 @@
 				INFOPLIST_FILE = RahulProjectSwiftUI/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = MyApp;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Need Camera Permission";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We use your location to show local weather and events.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Need Photo Permission";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

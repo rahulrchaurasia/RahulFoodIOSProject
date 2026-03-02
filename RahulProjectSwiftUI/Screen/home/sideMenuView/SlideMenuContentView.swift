@@ -218,6 +218,8 @@ struct SlideMenuContentView: View {
         case .forgotPassword: break
             // router.navigate(to: .forgotPassword)
             
+            coordinator.navigate(to: .home(.notification))
+            
         case .vegFood, .nonVegFood:
             
               coordinator.navigate(to: .home(.agent))
@@ -233,6 +235,10 @@ struct SlideMenuContentView: View {
             // router.navigate(to: .settings)
             
             coordinator.navigate(to: .home(.setting))
+            
+        case .notification:
+            
+            coordinator.navigate(to: .home(.notification))
             
         case .logout :
             // Handle logout

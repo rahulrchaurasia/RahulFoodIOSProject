@@ -60,7 +60,11 @@ import SwiftUI
     @main
     struct RahulProjectSwiftUIApp: App {
         
-        // 1. Keep the Container constant
+        // 👉 ADD THIS LINE: Connects SwiftUI to your AppDelegate
+        @UIApplicationDelegateAdaptor(AppDelegate.self)
+        var appDelegate
+        
+        // 1. Kee p the Container constant
         private let container: DependencyContainer
         
         
@@ -83,24 +87,27 @@ import SwiftUI
             self.container = container
             
             // B. Initialize StateObjects using the Container
-           // This is the ONLY way to inject dependencies into root-level StateObjects
+            // This is the ONLY way to inject dependencies into root-level StateObjects
             
-           
+            
             _appState = StateObject(
-                        wrappedValue: AppState(
-                            connectivityMonitor: container.connectivityMonitor
-                        )
-                    )
+                wrappedValue: AppState(
+                    connectivityMonitor: container.connectivityMonitor
+                )
+            )
             _coordinator = StateObject(wrappedValue: AppCoordinator())
             
             // UserVM usually needs a repo, so we grab it from container (assuming you update UserVM init later)
             _userVM = StateObject(wrappedValue: UserViewModel())
-          
-           
-           // ✅ HOME VM: Creating it here makes it the "Single Source of Truth" for the app.
-                    // We call 'makeHomeViewModel' because 'App' will hold the single instance.
-           // _homeVM = StateObject(wrappedValue: container.makeHomeViewModel())
+            
+            
+            // ✅ HOME VM: Creating it here makes it the "Single Source of Truth" for the app.
+            // We call 'makeHomeViewModel' because 'App' will hold the single instance.
+            // _homeVM = StateObject(wrappedValue: container.makeHomeViewModel())
             _homeVM = StateObject(wrappedValue: container.makeSharedHomeViewModel())
+            
+            
+           
         }
         
         var body: some Scene {
@@ -120,6 +127,10 @@ import SwiftUI
                         
                         // Call the second function for the tap gesture
                         UIApplication.shared.addTapGestureRecognizer()
+                        
+                        Task {
+                            try? await NotificationManager.shared.requestPermission()
+                        }
                     }
                 
             }

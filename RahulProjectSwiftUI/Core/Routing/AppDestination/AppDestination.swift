@@ -104,6 +104,7 @@ enum HomeFlow: Hashable {
         case order(mealId: String, mealName: String)
         case setting
         case agent
+         case notification
     
     @MainActor @ViewBuilder
     func destinationView(container: DependencyContainer) -> some View {
@@ -148,6 +149,10 @@ enum HomeFlow: Hashable {
             
             AppearanceSettingsView()
        
+        case .notification:
+            // TODO: Replace with your actual Notification view when available
+           
+            NotificationScreen()
       
         }
         

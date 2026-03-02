@@ -19,6 +19,7 @@ enum MenuDestination: Hashable {
     case insurance(type: InsuranceType)
 
     case settings
+    case notification
     case logout
 }
 //💡 Title = UI only
@@ -61,7 +62,11 @@ struct MenuDataProvider {
                 title: "Forgot Password",
                 icon: "lock.rotation",
                 destination: .forgotPassword
-            )
+            ),
+            
+            MenuItem(title: "Notification",
+                     icon: "bell.fill",
+                     destination: .notification)
         ]
         
         let categoryChildren = [
@@ -87,6 +92,8 @@ struct MenuDataProvider {
             MenuItem(title: "Health",
                      icon: "heart.fill",
                      destination: .insurance(type: .health)),
+            
+         
           
         ]
         

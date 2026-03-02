@@ -14,6 +14,14 @@ import Combine
 import SwiftUI
 import Combine
 
+/*
+ @AppStorage is just a SwiftUI wrapper around UserDefaults.
+
+ So yes — it uses the same UserDefaults key internally.
+ 
+ @AppStorage("isLoggedIn") private var isLoggedIn: Bool = false
+ It represent the isLoggedIn
+ */
 @MainActor
 final class UserViewModel: ObservableObject {
     // MARK: - Form Fields
@@ -89,10 +97,13 @@ final class UserViewModel: ObservableObject {
                        // Save to UserDefaults
                        UserDefaultsManager.shared.saveLoggedInUser(user)
                        
-                       // Update session state
+                       // Update session state and Login State OF User ****
+                       //. Set them as logged in
                        saveUserSession(email: email)
                        
-                       // Update UI state to success
+                       
+                       // 👉 1. Force a token sync now that we know who they are!
+                       PushNotificationManager.shared.syncTokenAfterLogin()
                        loginState = .success(user)
                        clearForm()
                    } else {
@@ -167,7 +178,7 @@ final class UserViewModel: ObservableObject {
     // MARK: - Session Management
     private func saveUserSession(email: String) {
         storedEmail = email
-        isLoggedIn = true
+        isLoggedIn = true    //*** Note : Login State ysung AppStorage it saved here
         UserDefaultsManager.shared.isLoggedIn = true
     }
 //    

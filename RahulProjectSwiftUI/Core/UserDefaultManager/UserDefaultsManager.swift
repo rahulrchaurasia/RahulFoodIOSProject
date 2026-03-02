@@ -23,11 +23,16 @@ final class UserDefaultsManager {
         static let isLoggedIn = "isLoggedIn"
         static let hasSeenOnboarding = "hasCompletedOnboarding"
         
+        // 👉 1. Add the FCM Token key
+        static let fcmToken = "fcmToken"
+        
         // Add this to get all keys
         static var allKeys: [String] {
-                return [username, isDarkMode, userSettings, isLoggedIn,"loggedInUser"]
+                return [username, isDarkMode, userSettings, isLoggedIn,"loggedInUser",fcmToken]
         }
     }
+    
+    
     
     // MARK: - Store user session
     /************************************/
@@ -163,6 +168,13 @@ final class UserDefaultsManager {
             print("✅ UserDefaults: Cleared user data (preserved onboarding state)")
         }
         
+    
+    // 👉 3. Add the property to access it easily
+    var fcmToken: String? {
+        get { defaults.string(forKey: Keys.fcmToken) }
+        set { defaults.set(newValue, forKey: Keys.fcmToken) }
+    }
+    
 }
 
 // Your custom settings model
